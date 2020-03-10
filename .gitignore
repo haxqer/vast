@@ -1,0 +1,16 @@
+vendor/*
+!vendor/vendor.json
+coverage.out
+count.out
+test
+profile.out
+tmp.out
+
+.settings/
+.project
+runtime/
+.idea/
+.git/
+.DS_Store
+.buildpath
+*.patch
