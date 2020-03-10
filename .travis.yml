@@ -1,8 +1,22 @@
 language: go
-go:
-- 1.7
-- 1.8
-- tip
+sudo: false
+
+go_import_path: github.com/haxqer/vast
+env:
+  global:
+    - TEST_TIMEOUT_SCALE=10
+    - GO111MODULE=on
+
 matrix:
-  allow_failures:
-      - go: tip
+  include:
+    - go: 1.13.x
+      env: LINT=1
+
+script:
+  - test -z "$LINT" || make lint
+  - make test
+  - make bench
+
+after_success:
+  - make cover
+  - bash <(curl -s https://codecov.io/bash)
