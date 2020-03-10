@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createVastTest() (*VAST, error) {
+func createVastDemo() (*VAST, error) {
 	adId := "123"
 	adTitle := "ad title"
 	assetId := "123456"
@@ -68,6 +68,44 @@ func createVastTest() (*VAST, error) {
 	return v, nil
 }
 
+func BenchmarkVastMarshalXML(b *testing.B) {
+
+	want := []byte(`<VAST version="3.0"><Ad id="123" type="front"><InLine><AdSystem><![CDATA[DSP]]></AdSystem><AdTitle><![CDATA[ad title]]></AdTitle><Impression id="456"><![CDATA[http://impression.track.cn]]></Impression><Creatives><Creative id="123456"><Linear><Duration>00:00:15</Duration><TrackingEvents><Tracking event="start"><![CDATA[http://track.xxx.com/q/start?xx]]></Tracking></TrackingEvents><MediaFiles><MediaFile delivery="progressive" type="video/mp4" width="1024" height="576"><![CDATA[http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4]]></MediaFile></MediaFiles></Linear></Creative></Creatives><Description></Description><Survey></Survey></InLine></Ad></VAST>`)
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		v, _ := createVastDemo()
+		got, err := xml.Marshal(v)
+		if err != nil {
+			b.Errorf("Marshal() error = %v", err)
+			return
+		}
+		if !reflect.DeepEqual(got, want) {
+			b.Errorf("Marshal() got = %v, want %v", got, want)
+		}
+	}
+}
+
+func BenchmarkVastMarshalJson(b *testing.B) {
+
+	want := []byte(`{"Version":"3.0","Ad":[{"ID":"123","Type":"front","InLine":{"AdSystem":{"Name":"DSP"},"AdTitle":{"Data":"ad title"},"Impressions":[{"ID":"456","URI":"http://impression.track.cn"}],"Creatives":[{"ID":"123456","Linear":{"Duration":"00:00:15","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"}],"MediaFiles":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4"}]}}],"Description":{"Data":""},"Survey":{"Data":""}}}]}`)
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		v, _ := createVastDemo()
+		got, err := ffjson.Marshal(v)
+		if err != nil {
+			b.Errorf("Marshal() error = %v", err)
+			return
+		}
+		if !reflect.DeepEqual(got, want) {
+			b.Errorf("Marshal() got = %v, want %v", got, want)
+		}
+	}
+}
+
 func TestCreateVastJson(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -79,9 +117,32 @@ func TestCreateVastJson(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			v, _ := createVastTest()
+			v, _ := createVastDemo()
 			got, err := ffjson.Marshal(v)
-			t.Logf("%s", got)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Marshal() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Marshal() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestCreateVastXML(t *testing.T) {
+	tests := []struct {
+		name    string
+		want    []byte
+		wantErr bool
+	}{
+		{name: "testCase1", want: []byte(`<VAST version="3.0"><Ad id="123" type="front"><InLine><AdSystem><![CDATA[DSP]]></AdSystem><AdTitle><![CDATA[ad title]]></AdTitle><Impression id="456"><![CDATA[http://impression.track.cn]]></Impression><Creatives><Creative id="123456"><Linear><Duration>00:00:15</Duration><TrackingEvents><Tracking event="start"><![CDATA[http://track.xxx.com/q/start?xx]]></Tracking></TrackingEvents><MediaFiles><MediaFile delivery="progressive" type="video/mp4" width="1024" height="576"><![CDATA[http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4]]></MediaFile></MediaFiles></Linear></Creative></Creatives><Description></Description><Survey></Survey></InLine></Ad></VAST>`),
+			wantErr: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v, _ := createVastDemo()
+			got, err := xml.Marshal(v)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Marshal() error = %v, wantErr %v", err, tt.wantErr)
 				return
