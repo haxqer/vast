@@ -12,6 +12,8 @@ XML/Json
   * https://www.iab.com/wp-content/uploads/2016/04/VAST4.0_Updated_April_2016.pdf
 * VAST 4.1 Spec:
   * https://iabtechlab.com/wp-content/uploads/2018/11/VAST4.1-final-Nov-8-2018.pdf
+* VAST 4.2 Spec:
+  * https://iabtechlab.com/wp-content/uploads/2019/06/VAST_4.2_final_june26.pdf
 * [VAST Samples](https://github.com/InteractiveAdvertisingBureau/VAST_Samples)
 
 ## Installation
