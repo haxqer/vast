@@ -2,14 +2,97 @@ package vast
 
 import (
 	"encoding/xml"
+	"github.com/pquerna/ffjson/ffjson"
 	"io/ioutil"
 	"os"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func createVastTest() (*VAST, error) {
+	adId := "123"
+	adTitle := "ad title"
+	assetId := "123456"
+	impressionId := "456"
+	impressionURI := "http://impression.track.cn"
+	seconds := Duration(15 * time.Second)
+	mediaType := "video/mp4"
+	mediaURI := "http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4"
+
+	v := &VAST{
+		Version: "3.0",
+		Ads: []Ad{
+			{
+				ID:   adId,
+				Type: "front",
+				InLine: &InLine{
+					AdSystem: &AdSystem{Name: "DSP"},
+					AdTitle:  CDATAString{CDATA: adTitle},
+					Impressions: []Impression{
+						{ID: impressionId, URI: impressionURI},
+					},
+					Creatives: []Creative{
+						{
+							ID:       assetId,
+							Sequence: 0,
+							Linear: &Linear{
+								Duration: seconds,
+								TrackingEvents: []Tracking{
+									{
+										Event:  Event_type_start,
+										Offset: nil,
+										URI:    "http://track.xxx.com/q/start?xx",
+										UA:     "",
+									},
+								},
+								MediaFiles: []MediaFile{
+									{
+										Delivery: "progressive",
+										Type:     mediaType,
+										Width:    1024,
+										Height:   576,
+										URI:      mediaURI,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	return v, nil
+}
+
+func TestCreateVastJson(t *testing.T) {
+	tests := []struct {
+		name    string
+		want    []byte
+		wantErr bool
+	}{
+		{name: "testCase1", want: []byte(`{"Version":"3.0","Ad":[{"ID":"123","Type":"front","InLine":{"AdSystem":{"Name":"DSP"},"AdTitle":{"Data":"ad title"},"Impressions":[{"ID":"456","URI":"http://impression.track.cn"}],"Creatives":[{"ID":"123456","Linear":{"Duration":"00:00:15","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"}],"MediaFiles":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4"}]}}],"Description":{"Data":""},"Survey":{"Data":""}}}]}`),
+			wantErr: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v, _ := createVastTest()
+			got, err := ffjson.Marshal(v)
+			t.Logf("%s", got)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Marshal() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Marshal() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 
 func loadFixture(path string) (*VAST, string, string, error) {
 	xmlFile, err := os.Open(path)
