@@ -54,10 +54,14 @@ type InLine struct {
 	// One or more URIs that directs the video player to a tracking resource file that the
 	// video player should request when the first frame of the ad is displayed
 	Impressions []Impression `xml:"Impression"`
+	// Any ad server that returns a VAST containing an <InLine> ad must generate a pseudo- unique identifier
+	// that is appropriate for all involved parties to track the lifecycle of that ad.
+	// Example: ServerName-47ed3bac-1768-4b9a-9d0e-0b92422ab066
+	AdServingId string `xml:",omitempty" json:",omitempty"`
 	// The container for one or more <Creative> elements
 	Creatives []Creative `xml:"Creatives>Creative"`
 	// A string value that provides a longer description of the ad.
-	Description CDATAString `xml:",omitempty" json:",omitempty"`
+	Description *CDATAString `xml:",omitempty" json:",omitempty"`
 	// The name of the advertiser as defined by the ad serving party.
 	// This element can be used to prevent displaying ads with advertiser
 	// competitors. Ad serving parties and publishers should identify how
@@ -70,7 +74,7 @@ type InLine struct {
 	// For example, the attribute might be set to type=”text/javascript”.
 	// Surveys can be dynamically inserted into the VAST response as long as
 	// cross-domain issues are avoided.
-	Survey CDATAString `xml:",omitempty" json:",omitempty"`
+	Survey *CDATAString `xml:",omitempty" json:",omitempty"`
 	// A URI representing an error-tracking pixel; this element can occur multiple
 	// times.
 	Errors []CDATAString `xml:"Error,omitempty" json:"Error,omitempty"`
