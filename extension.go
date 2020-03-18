@@ -6,8 +6,8 @@ import "encoding/xml"
 // VAST response or by custom trackers.
 type Extension struct {
 	Type           string     `xml:"type,attr,omitempty"`
-	CustomTracking []Tracking `xml:"CustomTracking>Tracking,omitempty"`
-	Data           []byte     `xml:",innerxml"`
+	CustomTracking []Tracking `xml:"CustomTracking>Tracking,omitempty"  json:",omitempty"`
+	Data           string     `xml:",innerxml" json:",omitempty"`
 }
 
 // the extension type as a middleware in the encoding process.
@@ -15,7 +15,7 @@ type extension Extension
 
 type extensionNoCT struct {
 	Type string `xml:"type,attr,omitempty"`
-	Data []byte `xml:",innerxml"`
+	Data string `xml:",innerxml" json:",omitempty"`
 }
 
 // MarshalXML implements xml.Marshaler interface.
