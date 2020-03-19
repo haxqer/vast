@@ -85,6 +85,37 @@ func TestQuickStart(t *testing.T) {
 
 }
 
+func TestEmptyVast(t *testing.T)  {
+	v := VAST{
+		Version: "3.0",
+		Errors: []CDATAString{
+			{CDATA: "http://xx.xx.com/e/error?e=__ERRORCODE__&co=__CONTENTPLAYHEAD__&ca=__CACHEBUSTING__&a=__ASSETURI__&t=__TIMESTAMP__&o=__OTHER__"},
+		},
+	}
+	want := []byte(`{"Version":"3.0","Errors":[{"Data":"http://xx.xx.com/e/error?e=__ERRORCODE__\u0026co=__CONTENTPLAYHEAD__\u0026ca=__CACHEBUSTING__\u0026a=__ASSETURI__\u0026t=__TIMESTAMP__\u0026o=__OTHER__"}]}`)
+	got, err := json.Marshal(v)
+	if err != nil {
+		t.Errorf("Marshal() error = %v", err)
+		return
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Logf("%s", got)
+		t.Errorf("Marshal() got = %v, want %v", got, want)
+	}
+
+	want = []byte(`<VAST version="3.0"><Error><![CDATA[http://xx.xx.com/e/error?e=__ERRORCODE__&co=__CONTENTPLAYHEAD__&ca=__CACHEBUSTING__&a=__ASSETURI__&t=__TIMESTAMP__&o=__OTHER__]]></Error></VAST>`)
+	got, err = xml.Marshal(v)
+	if err != nil {
+		t.Errorf("Marshal() error = %v", err)
+		return
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Logf("%s", got)
+		t.Errorf("Marshal() got = %v, want %v", got, want)
+	}
+
+}
+
 func createVastDemo() (*VAST, error) {
 	adId := "123"
 	adTitle := "ad title"
