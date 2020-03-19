@@ -281,7 +281,7 @@ type Companion struct {
 	// Used to match companion creative to publisher placement areas on the page.
 	AdSlotID string `xml:"adSlotId,attr,omitempty" json:",omitempty"`
 	// URL to open as destination page when user clicks on the the companion banner ad.
-	CompanionClickThrough CDATAString `xml:",omitempty" json:",omitempty"`
+	CompanionClickThrough *CDATAString `xml:",omitempty" json:",omitempty"`
 	// URLs to ping when user clicks on the the companion banner ad.
 	CompanionClickTracking []CDATAString `xml:",omitempty" json:",omitempty"`
 	// Alt text to be displayed when companion is rendered in HTML environment.
@@ -295,7 +295,7 @@ type Companion struct {
 	// URL to a static file, such as an image or SWF file
 	StaticResource *StaticResource `xml:",omitempty" json:",omitempty"`
 	// URL source for an IFrame to display the companion element
-	IFrameResource CDATAString `xml:",omitempty" json:",omitempty"`
+	IFrameResource *CDATAString `xml:",omitempty" json:",omitempty"`
 	// HTML to display the companion element
 	HTMLResource *HTMLResource `xml:",omitempty" json:",omitempty"`
 }
@@ -321,7 +321,7 @@ type CompanionWrapper struct {
 	// Used to match companion creative to publisher placement areas on the page.
 	AdSlotID string `xml:"adSlotId,attr,omitempty" json:",omitempty"`
 	// URL to open as destination page when user clicks on the the companion banner ad.
-	CompanionClickThrough CDATAString `xml:",omitempty" json:",omitempty"`
+	CompanionClickThrough *CDATAString `xml:",omitempty" json:",omitempty"`
 	// URLs to ping when user clicks on the the companion banner ad.
 	CompanionClickTracking []CDATAString `xml:",omitempty" json:",omitempty"`
 	// Alt text to be displayed when companion is rendered in HTML environment.
@@ -335,7 +335,7 @@ type CompanionWrapper struct {
 	// URL to a static file, such as an image or SWF file
 	StaticResource *StaticResource `xml:",omitempty" json:",omitempty"`
 	// URL source for an IFrame to display the companion element
-	IFrameResource CDATAString `xml:",omitempty" json:",omitempty"`
+	IFrameResource *CDATAString `xml:",omitempty" json:",omitempty"`
 	// HTML to display the companion element
 	HTMLResource *HTMLResource `xml:",omitempty" json:",omitempty"`
 }
@@ -364,13 +364,13 @@ type NonLinear struct {
 	// URLs to ping when user clicks on the the non-linear ad.
 	NonLinearClickTracking []CDATAString `xml:",omitempty" json:",omitempty"`
 	// URL to open as destination page when user clicks on the non-linear ad unit.
-	NonLinearClickThrough CDATAString `xml:",omitempty" json:",omitempty"`
+	NonLinearClickThrough *CDATAString `xml:",omitempty" json:",omitempty"`
 	// Data to be passed into the video ad.
 	AdParameters *AdParameters `xml:",omitempty" json:",omitempty"`
 	// URL to a static file, such as an image or SWF file
 	StaticResource *StaticResource `xml:",omitempty" json:",omitempty"`
 	// URL source for an IFrame to display the companion element
-	IFrameResource CDATAString `xml:",omitempty" json:",omitempty"`
+	IFrameResource *CDATAString `xml:",omitempty" json:",omitempty"`
 	// HTML to display the companion element
 	HTMLResource *HTMLResource `xml:",omitempty" json:",omitempty"`
 }
@@ -428,13 +428,13 @@ type Icon struct {
 	// The apiFramework defines the method to use for communication with the icon element
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
 	// URL to open as destination page when user clicks on the icon.
-	IconClickThrough CDATAString `xml:"IconClicks>IconClickThrough,omitempty" json:",omitempty"`
+	IconClickThrough *CDATAString `xml:"IconClicks>IconClickThrough,omitempty" json:",omitempty"`
 	// URLs to ping when user clicks on the the icon.
 	IconClickTrackings []CDATAString `xml:"IconClicks>IconClickTracking,omitempty" json:",omitempty"`
 	// URL to a static file, such as an image or SWF file
 	StaticResource *StaticResource `xml:",omitempty" json:",omitempty"`
 	// URL source for an IFrame to display the companion element
-	IFrameResource CDATAString `xml:",omitempty" json:",omitempty"`
+	IFrameResource *CDATAString `xml:",omitempty" json:",omitempty"`
 	// HTML to display the companion element
 	HTMLResource *HTMLResource `xml:",omitempty" json:",omitempty"`
 }
