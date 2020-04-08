@@ -528,6 +528,8 @@ type MediaFile struct {
 	// placed in key/value pairs on the asset request).
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
 	URI          string `xml:",cdata"`
+	// Label
+	Label string `xml:"label,attr,omitempty" json:",omitempty"`
 }
 
 // UniversalAdID describes a VAST 4.x universal ad id.
