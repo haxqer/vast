@@ -16,6 +16,8 @@ type VAST struct {
 	// Contains a URI to a tracking resource that the video player should request
 	// upon receiving a “no ad” response
 	Errors []CDATAString `xml:"Error,omitempty" json:",omitempty"`
+
+	Mute bool `xml:"mute,attr,omitempty" json:",omitempty"`
 }
 
 // Ad represent an <Ad> child tag in a VAST document
