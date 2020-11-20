@@ -35,7 +35,7 @@ func TestQuickStartComplex(t *testing.T) {
 					},
 					Description: &CDATAString{"123"},
 					ViewableImpression: &ViewableImpression{
-						ID:       "1234",
+						ID: "1234",
 						Viewable: &[]CDATAString{
 							{CDATA: "http://viewable1.track.com"},
 							{CDATA: "http://viewable2.track.com"},
@@ -76,14 +76,15 @@ func TestQuickStartComplex(t *testing.T) {
 									{Event: EventTypeThirdQuartile, URI: "http://track.xxx.com/q/thirdQuartile?xx"},
 									{Event: EventTypeComplete, URI: "http://track.xxx.com/q/complete?xx"},
 								},
-								MediaFiles: []MediaFile{
-									{
-										Delivery: "progressive",
-										Type:     "video/mp4",
-										Width:    1024,
-										Height:   576,
-										URI:      "http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4",
-										Label:    "123",
+								MediaFiles: &MediaFiles{
+									MediaFile: &[]MediaFile{
+										{
+											Delivery: "progressive",
+											Type:     "video/mp4",
+											Width:    1024,
+											Height:   576,
+											URI:      "http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4",
+										},
 									},
 								},
 							},
@@ -112,7 +113,7 @@ func TestQuickStartComplex(t *testing.T) {
 func TestQuickStart(t *testing.T) {
 	d := Duration(5 * time.Second)
 	v := VAST{
-		Mute: true,
+		Mute:    true,
 		Version: "3.0",
 		Ads: []Ad{
 			{
@@ -141,27 +142,29 @@ func TestQuickStart(t *testing.T) {
 									{Event: EventTypeThirdQuartile, URI: "http://track.xxx.com/q/thirdQuartile?xx"},
 									{Event: EventTypeComplete, URI: "http://track.xxx.com/q/complete?xx"},
 								},
-								MediaFiles: []MediaFile{
-									{
-										Delivery: "progressive",
-										Type:     "video/mp4",
-										Width:    1024,
-										Height:   576,
-										URI:      "http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4",
-										Label: "123",
+								MediaFiles: &MediaFiles{
+									MediaFile: &[]MediaFile{
+										{
+											Delivery: "progressive",
+											Type:     "video/mp4",
+											Width:    1024,
+											Height:   576,
+											URI:      "http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4",
+											Label:    "123",
+										},
 									},
 								},
 							},
 						},
 					},
-					Extensions:  &[]Extension{
+					Extensions: &[]Extension{
 						{
-							Type:           "ClassName",
-							Data:           "AdsVideoView",
+							Type: "ClassName",
+							Data: "AdsVideoView",
 						},
 						{
-							Type:           "ExtURL",
-							Data:           "http://xxxxxxxx",
+							Type: "ExtURL",
+							Data: "http://xxxxxxxx",
 						},
 					},
 				},
@@ -169,7 +172,7 @@ func TestQuickStart(t *testing.T) {
 		},
 	}
 
-	want := []byte(`{"Version":"3.0","Ad":[{"ID":"123","Type":"front","InLine":{"AdSystem":{"Data":"DSP"},"AdTitle":{"Data":"adTitle"},"Impressions":[{"ID":"11111","URI":"http://impressionv1.track.com"},{"ID":"11112","URI":"http://impressionv2.track.com"}],"Creatives":[{"ID":"987","Linear":{"SkipOffset":"00:00:05","Duration":"00:00:15","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"},{"Event":"firstQuartile","URI":"http://track.xxx.com/q/firstQuartile?xx"},{"Event":"midpoint","URI":"http://track.xxx.com/q/midpoint?xx"},{"Event":"thirdQuartile","URI":"http://track.xxx.com/q/thirdQuartile?xx"},{"Event":"complete","URI":"http://track.xxx.com/q/complete?xx"}],"MediaFiles":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4","Label":"123"}]}}],"Extensions":[{"Type":"ClassName","Data":"AdsVideoView"},{"Type":"ExtURL","Data":"http://xxxxxxxx"}]}}],"Mute":true}`)
+	want := []byte(`{"Version":"3.0","Ad":[{"ID":"123","Type":"front","InLine":{"AdSystem":{"Data":"DSP"},"AdTitle":{"Data":"adTitle"},"Impressions":[{"ID":"11111","URI":"http://impressionv1.track.com"},{"ID":"11112","URI":"http://impressionv2.track.com"}],"Creatives":[{"ID":"987","Linear":{"SkipOffset":"00:00:05","Duration":"00:00:15","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"},{"Event":"firstQuartile","URI":"http://track.xxx.com/q/firstQuartile?xx"},{"Event":"midpoint","URI":"http://track.xxx.com/q/midpoint?xx"},{"Event":"thirdQuartile","URI":"http://track.xxx.com/q/thirdQuartile?xx"},{"Event":"complete","URI":"http://track.xxx.com/q/complete?xx"}],"MediaFiles":{"MediaFile":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4","Label":"123"}]}}}],"Extensions":[{"Type":"ClassName","Data":"AdsVideoView"},{"Type":"ExtURL","Data":"http://xxxxxxxx"}]}}],"Mute":true}`)
 	got, err := json.Marshal(v)
 	t.Logf("%s", got)
 	if err != nil {
@@ -177,12 +180,12 @@ func TestQuickStart(t *testing.T) {
 		return
 	}
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("Marshal() got = %v, want %v", got, want)
+		t.Errorf("\n got = %s,  \nwant = %s", got, want)
 	}
 
 }
 
-func TestEmptyVast(t *testing.T)  {
+func TestEmptyVast(t *testing.T) {
 	v := VAST{
 		Version: "3.0",
 		Errors: []CDATAString{
@@ -249,13 +252,16 @@ func createVastDemo() (*VAST, error) {
 										UA:     "",
 									},
 								},
-								MediaFiles: []MediaFile{
-									{
-										Delivery: "progressive",
-										Type:     mediaType,
-										Width:    1024,
-										Height:   576,
-										URI:      mediaURI,
+								MediaFiles: &MediaFiles{
+									MediaFile: &[]MediaFile{
+										{
+											Delivery: "progressive",
+											Type:     mediaType,
+											Width:    1024,
+											Height:   576,
+											URI:      mediaURI,
+											Label:    "123",
+										},
 									},
 								},
 							},
@@ -312,7 +318,7 @@ func TestCreateVastJson(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		{name: "testCase1", want: []byte(`{"Version":"3.0","Ad":[{"ID":"123","Type":"front","InLine":{"AdSystem":{"Data":"DSP"},"AdTitle":{"Data":"ad title"},"Impressions":[{"ID":"456","URI":"http://impression.track.cn"}],"Creatives":[{"ID":"123456","Linear":{"Duration":"00:00:15","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"}],"MediaFiles":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4"}]}}]}}]}`),
+		{name: "testCase1", want: []byte(`{"Version":"3.0","Ad":[{"ID":"123","Type":"front","InLine":{"AdSystem":{"Data":"DSP"},"AdTitle":{"Data":"ad title"},"Impressions":[{"ID":"456","URI":"http://impression.track.cn"}],"Creatives":[{"ID":"123456","Linear":{"Duration":"00:00:15","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"}],"MediaFiles":{"MediaFile":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4","Label":"123"}]}}}]}}]}`),
 			wantErr: false},
 	}
 	for _, tt := range tests {
@@ -324,7 +330,7 @@ func TestCreateVastJson(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Marshal() got = %v, want %v", got, tt.want)
+				t.Errorf("\ngot  %s \nwant %s", got, tt.want)
 			}
 		})
 	}
@@ -336,7 +342,7 @@ func TestCreateVastXML(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		{name: "testCase1", want: []byte(`<VAST version="3.0"><Ad id="123" type="front"><InLine><AdSystem>DSP</AdSystem><AdTitle>ad title</AdTitle><Impression id="456"><![CDATA[http://impression.track.cn]]></Impression><Creatives><Creative id="123456"><Linear><Duration>00:00:15</Duration><TrackingEvents><Tracking event="start"><![CDATA[http://track.xxx.com/q/start?xx]]></Tracking></TrackingEvents><MediaFiles><MediaFile delivery="progressive" type="video/mp4" width="1024" height="576"><![CDATA[http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4]]></MediaFile></MediaFiles></Linear></Creative></Creatives></InLine></Ad></VAST>`),
+		{name: "testCase1", want: []byte(`<VAST version="3.0"><Ad id="123" type="front"><InLine><AdSystem>DSP</AdSystem><AdTitle>ad title</AdTitle><Impression id="456"><![CDATA[http://impression.track.cn]]></Impression><Creatives><Creative id="123456"><Linear><Duration>00:00:15</Duration><TrackingEvents><Tracking event="start"><![CDATA[http://track.xxx.com/q/start?xx]]></Tracking></TrackingEvents><MediaFiles><MediaFile delivery="progressive" type="video/mp4" width="1024" height="576" label="123"><![CDATA[http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4]]></MediaFile></MediaFiles></Linear></Creative></Creatives></InLine></Ad></VAST>`),
 			wantErr: false},
 	}
 	for _, tt := range tests {
@@ -348,7 +354,7 @@ func TestCreateVastXML(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Marshal() got = %v, want %v", got, tt.want)
+				t.Errorf("\ngot  %s \nwant %s", got, tt.want)
 			}
 		})
 	}
@@ -373,5 +379,3 @@ func loadFixture(path string) (*VAST, string, string, error) {
 
 	return &v, string(b), string(res), err
 }
-
-

@@ -52,17 +52,15 @@ type Ad struct {
 	ConditionalAd bool `xml:"conditionalAd,attr,omitempty" json:",omitempty"`
 }
 
-// CDATAString ...
 type CDATAString struct {
 	CDATA string `xml:",cdata" json:"Data"`
 }
 
-// PlainString ...
 type PlainString struct {
 	CDATA string `xml:",chardata" json:"Data"`
 }
 
-// InLine is a vast <InLine> ad element containing actual ad definition
+// <InLine> is a vast <InLine> ad element containing actual ad definition
 //
 // The last ad server in the ad supply chain serves an <InLine> element.
 // Within the nested elements of an <InLine> element are all the files and
@@ -105,7 +103,7 @@ type InLine struct {
 	// The number of seconds in which the ad is valid for execution.
 	//In cases where the ad is requested ahead of time, this timing indicates how many seconds after the request that the ad expires and cannot be played.
 	//This element is useful for preventing an ad from playing after a timeout has occurred.
-	Expires *int  `xml:",omitempty" json:",omitempty"`
+	Expires *int `xml:",omitempty" json:",omitempty"`
 	// The ad server may provide URIs for tracking publisher-determined viewability,
 	// for both the InLine ad and any Wrappers, using the <ViewableImpression> element.
 	// Tracking URIs may be provided in three containers: <Viewable>, <NotViewable>, and <ViewUndetermined>.
@@ -149,7 +147,7 @@ type Pricing struct {
 	Value string `xml:",cdata"`
 }
 
-// Wrapper element contains a URI reference to a vendor ad server (often called
+// <Wrapper> element contains a URI reference to a vendor ad server (often called
 // a third party ad server). The destination ad server either provides the ad
 // files within a VAST <InLine> ad element or may provide a secondary Wrapper
 // ad, pointing to yet another ad server. Eventually, the final ad server in
@@ -202,7 +200,7 @@ type Creative struct {
 	// If defined, defines non linear creatives
 	NonLinearAds *NonLinearAds `xml:",omitempty" json:",omitempty"`
 	// If present, provides a VAST 4.x universal ad id
-	UniversalAdID *[]UniversalAdID `xml:"UniversalAdId,omitempty" json:",omitempty"`
+	UniversalAdID *[]UniversalAdID `xml:",omitempty" json:",omitempty"`
 	// When an API framework is needed to execute creative, a
 	// <CreativeExtensions> element can be added under the <Creative>. This
 	// extension can be used to load an executable creative with or without using
@@ -217,7 +215,7 @@ type Creative struct {
 	CreativeExtensions *[]Extension `xml:"CreativeExtensions>CreativeExtension,omitempty" json:",omitempty"`
 }
 
-// CompanionAds contains companions creatives
+// <CompanionAds> contains companions creatives
 type CompanionAds struct {
 	// Provides information about which companion creative to display.
 	// All means that the player must attempt to display all. Any means the player
@@ -233,7 +231,7 @@ type NonLinearAds struct {
 	NonLinears []NonLinear `xml:"NonLinear,omitempty" json:",omitempty"`
 }
 
-// CreativeWrapper defines wrapped creative's parent trackers
+// <CreativeWrapper> defines wrapped creative's parent trackers
 type CreativeWrapper struct {
 	// An ad server-defined identifier for the creative
 	ID string `xml:"id,attr,omitempty" json:",omitempty"`
@@ -249,7 +247,7 @@ type CreativeWrapper struct {
 	NonLinearAds *NonLinearAdsWrapper `xml:"NonLinearAds,omitempty" json:",omitempty"`
 }
 
-// CompanionAdsWrapper contains companions creatives in a wrapper
+// <CompanionAdsWrapper> contains companions creatives in a wrapper
 type CompanionAdsWrapper struct {
 	// Provides information about which companion creative to display.
 	// All means that the player must attempt to display all. Any means the player
@@ -258,18 +256,18 @@ type CompanionAdsWrapper struct {
 	Companions []CompanionWrapper `xml:"Companion,omitempty" json:",omitempty"`
 }
 
-// NonLinearAdsWrapper contains non linear creatives in a wrapper
+// <NonLinearAdsWrapper> contains non linear creatives in a wrapper
 type NonLinearAdsWrapper struct {
 	TrackingEvents []Tracking `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
 	// Non linear creatives
 	NonLinears []NonLinearWrapper `xml:"NonLinear,omitempty" json:",omitempty"`
 }
 
-// Linear is the most common type of video advertisement trafficked in the
+// <Linear> is the most common type of video advertisement trafficked in the
 // industry is a “linear ad”, which is an ad that displays in the same area
 // as the content but not at the same time as the content. In fact, the video
 // player must interrupt the content before displaying a linear ad.
-// Linear ads are often displayed right before the video content plays.
+// <Linear> ads are often displayed right before the video content plays.
 // This ad position is called a “pre-roll” position. For this reason, a linear
 // ad is often called a “pre-roll.”
 type Linear struct {
@@ -287,17 +285,17 @@ type Linear struct {
 	Icons          *Icons        `json:",omitempty"`
 	TrackingEvents []Tracking    `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
 	VideoClicks    *VideoClicks  `xml:",omitempty" json:",omitempty"`
-	MediaFiles     []MediaFile   `xml:"MediaFiles>MediaFile,omitempty" json:",omitempty"`
+	MediaFiles     *MediaFiles
 }
 
-// LinearWrapper defines a wrapped linear creative
+// <LinearWrapper> defines a wrapped linear creative
 type LinearWrapper struct {
 	Icons          *Icons       `json:",omitempty"`
 	TrackingEvents []Tracking   `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
 	VideoClicks    *VideoClicks `xml:",omitempty" json:",omitempty"`
 }
 
-// Companion defines a companion ad
+// <Companion> defines a companion ad
 type Companion struct {
 	// Optional identifier
 	ID string `xml:"id,attr,omitempty" json:",omitempty"`
@@ -337,7 +335,7 @@ type Companion struct {
 	HTMLResource *HTMLResource `xml:",omitempty" json:",omitempty"`
 }
 
-// CompanionWrapper defines a companion ad in a wrapper
+// <CompanionWrapper> defines a companion ad in a wrapper
 type CompanionWrapper struct {
 	// Optional identifier
 	ID string `xml:"id,attr,omitempty" json:",omitempty"`
@@ -377,7 +375,7 @@ type CompanionWrapper struct {
 	HTMLResource *HTMLResource `xml:",omitempty" json:",omitempty"`
 }
 
-// NonLinear defines a non linear ad
+// <NonLinear> defines a non linear ad
 type NonLinear struct {
 	// Optional identifier
 	ID string `xml:"id,attr,omitempty" json:",omitempty"`
@@ -412,7 +410,7 @@ type NonLinear struct {
 	HTMLResource *HTMLResource `xml:",omitempty" json:",omitempty"`
 }
 
-// NonLinearWrapper defines a non linear ad in a wrapper
+// <NonLinearWrapper> defines a non linear ad in a wrapper
 type NonLinearWrapper struct {
 	// Optional identifier
 	ID string `xml:"id,attr,omitempty" json:",omitempty"`
@@ -441,10 +439,10 @@ type NonLinearWrapper struct {
 
 type Icons struct {
 	XMLName xml.Name `xml:"Icons,omitempty" json:",omitempty"`
-	Icon    []Icon   `xml:"Icon,omitempty" json:",omitempty"`
+	Icon    *[]Icon  `xml:"Icon,omitempty" json:",omitempty"`
 }
 
-// Icon represents advertising industry initiatives like AdChoices.
+// <Icon> represents advertising industry initiatives like AdChoices.
 type Icon struct {
 	// Identifies the industry initiative that the icon supports.
 	Program string `xml:"program,attr"`
@@ -476,7 +474,7 @@ type Icon struct {
 	HTMLResource *HTMLResource `xml:",omitempty" json:",omitempty"`
 }
 
-// Tracking defines an event tracking URL
+// <Tracking> defines an event tracking URL
 type Tracking struct {
 	// The name of the event to track for the element. The creativeView should
 	// always be requested when present.
@@ -494,7 +492,7 @@ type Tracking struct {
 	UA string `xml:"ua,attr,omitempty" json:",omitempty"`
 }
 
-// StaticResource is the URL to a static file, such as an image or SWF file
+// <StaticResource> is the URL to a static file, such as an image or SWF file
 type StaticResource struct {
 	// Mime type of static resource
 	CreativeType string `xml:"creativeType,attr,omitempty" json:",omitempty"`
@@ -502,39 +500,39 @@ type StaticResource struct {
 	URI string `xml:",cdata"`
 }
 
-// HTMLResource is a container for HTML data
+// <HTMLResource> is a container for HTML data
 type HTMLResource struct {
 	// Specifies whether the HTML is XML-encoded
 	XMLEncoded bool   `xml:"xmlEncoded,attr,omitempty" json:",omitempty"`
 	HTML       string `xml:",cdata"`
 }
 
-// AdParameters defines arbitrary ad parameters
+// <AdParameters> defines arbitrary ad parameters
 type AdParameters struct {
 	// Specifies whether the parameters are XML-encoded
 	XMLEncoded bool   `xml:"xmlEncoded,attr,omitempty" json:",omitempty"`
 	Parameters string `xml:",cdata"`
 }
 
-// VideoClicks contains types of video clicks
+// <VideoClicks> contains types of video clicks
 type VideoClicks struct {
 	ClickThroughs  []VideoClick `xml:"ClickThrough,omitempty" json:",omitempty"`
 	ClickTrackings []VideoClick `xml:"ClickTracking,omitempty" json:",omitempty"`
 	CustomClicks   []VideoClick `xml:"CustomClick,omitempty" json:",omitempty"`
 }
 
-// VideoClick defines a click URL for a linear creative
+// <VideoClick> defines a click URL for a linear creative
 type VideoClick struct {
 	ID  string `xml:"id,attr,omitempty" json:",omitempty"`
 	URI string `xml:",cdata"`
 }
 
-// MediaFile defines a reference to a linear creative asset
+// <MediaFile> defines a reference to a linear creative asset
 type MediaFile struct {
 	// Optional identifier
 	ID string `xml:"id,attr,omitempty" json:",omitempty"`
 	// Method of delivery of ad (either "streaming" or "progressive")
-	Delivery string `xml:"delivery,attr" json:",omitempty"`
+	Delivery string `xml:"delivery,attr"`
 	// MIME type. Popular MIME types include, but are not limited to
 	// “video/x-ms-wmv” for Windows Media, and “video/x-flv” for Flash
 	// Video. Image ads or interactive ads can be included in the
@@ -567,9 +565,15 @@ type MediaFile struct {
 	URI          string `xml:",cdata"`
 	// Label
 	Label string `xml:"label,attr,omitempty" json:",omitempty"`
+	// Optional field that helps eliminate the need to calculate the size based on bitrate and duration.
+	// Units - Bytes
+	FileSize int `xml:"fileSize,attr,omitempty" json:",omitempty"`
+	// Type of media file (2D / 3D / 360 / etc). Optional.
+	// Default value = 2D
+	MediaType string `xml:"mediaType,attr,omitempty" json:",omitempty"`
 }
 
-// UniversalAdID describes a VAST 4.x universal ad id.
+// <UniversalAdID> describes a VAST 4.x universal ad id.
 type UniversalAdID struct {
 	IDRegistry string `xml:"idRegistry,attr"`
 	ID         string `xml:",chardata"`
@@ -580,14 +584,18 @@ type Category struct {
 	Category  string `xml:",chardata"`
 }
 
-
-
 type Survey struct {
 	// A type attribute is available to specify the MIME type being served. For example,
 	// the attribute might be set to type="text/javascript".
 	// Surveys can be dynamically inserted into the VAST response as long as cross-domain issues are avoided.
 	Type string `xml:"type,attr"`
 	// A URI to any resource relating to an integrated survey.
-	URI  string `xml:"type,cdata"`
+	URI string `xml:",cdata"`
 }
 
+type MediaFiles struct {
+	MediaFile               *[]MediaFile
+	Mezzanine               *[]Mezzanine               `xml:",omitempty" json:",omitempty"`
+	InteractiveCreativeFile *[]InteractiveCreativeFile `xml:",omitempty" json:",omitempty"`
+	ClosedCaptionFiles      *[]ClosedCaptionFile       `xml:"ClosedCaptionFiles>ClosedCaptionFile,omitempty" json:",omitempty"`
+}
