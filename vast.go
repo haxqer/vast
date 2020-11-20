@@ -1,4 +1,4 @@
-// Package vast implements IAB VAST 3.0 specification http://www.iab.net/media/file/VASTv3.0.pdf
+// Package vast implements IAB VAST 4.2 https://iabtechlab.com/wp-content/uploads/2019/06/VAST_4.2_final_june26.pdf
 package vast
 
 import "encoding/xml"
@@ -26,14 +26,22 @@ type VAST struct {
 //
 // Each <Ad> contains a single <InLine> element or <Wrapper> element (but never both).
 type Ad struct {
-	InLine   *InLine  `xml:",omitempty" json:",omitempty"`
-	Wrapper  *Wrapper `xml:",omitempty" json:",omitempty"`
+	InLine  *InLine  `xml:",omitempty" json:",omitempty"`
+	Wrapper *Wrapper `xml:",omitempty" json:",omitempty"`
 	// An ad server-defined identifier string for the ad
 	ID string `xml:"id,attr,omitempty" json:",omitempty"`
 	// A number greater than zero (0) that identifies the sequence in which
 	// an ad should play; all <Ad> elements with sequence values are part of
 	// a pod and are intended to be played in sequence
-	Sequence int      `xml:"sequence,attr,omitempty" json:",omitempty"`
+	Sequence int `xml:"sequence,attr,omitempty" json:",omitempty"`
+	// [Deprecated in VAST 4.1, along with apiFramework]
+	// A Boolean value that identifies a conditional ad.
+	// In the case of programmatic ad serving, a VPAID ad unit or other mechanism might be used to decide whether there is an ad that matches the placement.
+	// When there is no match, an ad may not be served.
+	// Use of the conditionalAd attribute enables publishers to avoid accepting these ads in placements where an ad must be served.
+	// A value of true indicates that the ad is conditional and should be used in all cases where the InLine executable unit (such as VPAID) is not an ad but is instead a framework for finding an ad;
+	// a value of false is the default value and indicates that an ad is available.
+	ConditionalAd bool `xml:"conditionalAd,attr,omitempty" json:",omitempty"`
 	// An optional string that identifies the type of ad
 	// Possible values –video, audio, hybrid. Assumed to be video if attribute is not present
 	AdType string `xml:"adType,attr,omitempty" json:",omitempty"`
@@ -42,6 +50,11 @@ type Ad struct {
 // CDATAString ...
 type CDATAString struct {
 	CDATA string `xml:",cdata" json:"Data"`
+}
+
+// PlainString ...
+type PlainString struct {
+	CDATA string `xml:",chardata" json:"Data"`
 }
 
 // InLine is a vast <InLine> ad element containing actual ad definition
@@ -72,13 +85,14 @@ type InLine struct {
 	// Example: ServerName-47ed3bac-1768-4b9a-9d0e-0b92422ab066
 	AdServingId string `xml:",omitempty" json:",omitempty"`
 	// The common name of the ad
-	AdTitle CDATAString
+	AdTitle PlainString
 	// The name of the advertiser as defined by the ad serving party.
 	// This element can be used to prevent displaying ads with advertiser
 	// competitors. Ad serving parties and publishers should identify how
 	// to interpret values provided within this element. As with any optional
 	// elements, the video player is not required to support it.
-	Advertiser string `xml:",omitempty" json:",omitempty"`
+	Advertiser string      `xml:",omitempty" json:",omitempty"`
+	Category   *[]Category `xml:",omitempty" json:",omitempty"`
 	// The container for one or more <Creative> elements
 	Creatives []Creative `xml:"Creatives>Creative"`
 	// A string value that provides a longer description of the ad.
@@ -90,6 +104,14 @@ type InLine struct {
 	// Surveys can be dynamically inserted into the VAST response as long as
 	// cross-domain issues are avoided.
 	Survey *CDATAString `xml:",omitempty" json:",omitempty"`
+	// The number of seconds in which the ad is valid for execution.
+	//In cases where the ad is requested ahead of time, this timing indicates how many seconds after the request that the ad expires and cannot be played.
+	//This element is useful for preventing an ad from playing after a timeout has occurred.
+	Expires *int `xml:"Expires,omitempty" json:"Expires,omitempty"`
+	// The ad server may provide URIs for tracking publisher-determined viewability,
+	//for both the InLine ad and any Wrappers, using the <ViewableImpression> element.
+	//Tracking URIs may be provided in three containers: <Viewable>, <NotViewable>, and <ViewUndetermined>.
+	ViewableImpression *ViewableImpression `xml:"ViewableImpression,omitempty" json:"ViewableImpression,omitempty"`
 }
 
 // Impression is a URI that directs the video player to a tracking resource file that
@@ -137,8 +159,8 @@ type Wrapper struct {
 	Impressions []Impression `xml:"Impression"`
 	// URL of ad tag of downstream Secondary Ad Server
 	// The container for one or more <Creative> elements
-	Creatives []CreativeWrapper `xml:"Creatives>Creative"`
-	VASTAdTagURI CDATAString
+	Creatives                []CreativeWrapper `xml:"Creatives>Creative"`
+	VASTAdTagURI             CDATAString
 	FallbackOnNoAd           *bool `xml:"fallbackOnNoAd,attr,omitempty" json:",omitempty"`
 	AllowMultipleAds         *bool `xml:"allowMultipleAds,attr,omitempty" json:",omitempty"`
 	FollowAdditionalWrappers *bool `xml:"followAdditionalWrappers,attr,omitempty" json:",omitempty"`
@@ -147,7 +169,7 @@ type Wrapper struct {
 // AdSystem contains information about the system that returned the ad
 type AdSystem struct {
 	Version string `xml:"version,attr,omitempty" json:"Version,omitempty"`
-	Name    string `xml:",cdata" json:"Data"`
+	Name    string `xml:",chardata" json:"Data"`
 }
 
 // Creative is a file that is part of a VAST ad.
@@ -161,7 +183,7 @@ type Creative struct {
 	// The technology used for any included API
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
 	// If present, provides a VAST 4.x universal ad id
-	UniversalAdID *UniversalAdID `xml:"UniversalAdId,omitempty" json:",omitempty"`
+	UniversalAdID *[]UniversalAdID `xml:"UniversalAdId,omitempty" json:",omitempty"`
 	// If present, defines a linear creative
 	Linear *Linear `xml:",omitempty" json:",omitempty"`
 	// If defined, defins companions creatives
@@ -245,14 +267,14 @@ type Linear struct {
 	// represents milliseconds and is optional. This skipoffset value
 	// indicates when the skip control should be provided after the creative
 	// begins playing.
-	SkipOffset *Offset `xml:"skipoffset,attr,omitempty" json:",omitempty"`
+	SkipOffset     *Offset       `xml:"skipoffset,attr,omitempty" json:",omitempty"`
 	Icons          *Icons        `json:",omitempty"`
 	TrackingEvents []Tracking    `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
 	AdParameters   *AdParameters `xml:",omitempty" json:",omitempty"`
 	// Duration in standard time format, hh:mm:ss
-	Duration       Duration		 `xml:"Duration,omitempty" json:",omitempty"`
-	MediaFiles     []MediaFile   `xml:"MediaFiles>MediaFile,omitempty" json:",omitempty"`
-	VideoClicks    *VideoClicks  `xml:",omitempty" json:",omitempty"`
+	Duration    Duration     `xml:"Duration,omitempty" json:",omitempty"`
+	MediaFiles  []MediaFile  `xml:"MediaFiles>MediaFile,omitempty" json:",omitempty"`
+	VideoClicks *VideoClicks `xml:",omitempty" json:",omitempty"`
 }
 
 // LinearWrapper defines a wrapped linear creative
@@ -532,16 +554,16 @@ type MediaFile struct {
 	// placed in key/value pairs on the asset request).
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
 	URI          string `xml:",cdata"`
-	// Optional field that helps eliminate the need to calculate the size based on bitrate and duration. 
+	// Optional field that helps eliminate the need to calculate the size based on bitrate and duration.
 	FileSize int `xml:"fileSize,attr,omitempty" json:",omitempty"`
-	// Type of media file (2D / 3D / 360 / etc). 
+	// Type of media file (2D / 3D / 360 / etc).
 	MediaType string `xml:"mediaType,attr,omitempty" json:",omitempty"`
 }
 
 // UniversalAdID describes a VAST 4.x universal ad id.
 type UniversalAdID struct {
 	IDRegistry string `xml:"idRegistry,attr"`
-	ID         string `xml:",cdata"`
+	ID         string `xml:",chardata"`
 }
 
 // CompanionClickTracking element is used to track the click
@@ -556,4 +578,18 @@ type NonLinearClickTracking struct {
 	// An id provided by the ad server to track the click in reports
 	ID  string `xml:"id,attr,omitempty" json:",omitempty"`
 	URI string `xml:",cdata"`
+}
+
+type Category struct {
+	Authority string `xml:"authority,attr"`
+	Category  string `xml:",chardata"`
+}
+
+type Survey struct {
+	// A type attribute is available to specify the MIME type being served. For example,
+	// the attribute might be set to type="text/javascript".
+	// Surveys can be dynamically inserted into the VAST response as long as cross-domain issues are avoided.
+	Type string `xml:"type,attr"`
+	// A URI to any resource relating to an integrated survey.
+	URI string `xml:"type,cdata"`
 }

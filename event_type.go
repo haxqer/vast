@@ -9,53 +9,53 @@ const (
 	 * platforms are more common.
 	 */
 
-	Event_type_creativeView = "creativeView"
-	Event_type_view         = "view"
+	EventTypeCreativeView = "creativeView"
+	EventTypeView         = "view"
 
 	/**
 	 * this event is used to indicate that an individual creative within the ad was loaded and playback
 	 * began. As with creativeView, this event is another way of tracking creative playback.
 	 */
-	Event_type_start = "start"
+	EventTypeStart = "start"
 
 	// the creative played for at least 25% of the total duration.
-	Event_type_firstQuartile = "firstQuartile"
+	EventTypeFirstQuartile = "firstQuartile"
 
 	// the creative played for at least 50% of the total duration.
-	Event_type_midpoint = "midpoint"
+	EventTypeMidpoint = "midpoint"
 
 	// the creative played for at least 75% of the duration.
-	Event_type_thirdQuartile = "thirdQuartile"
+	EventTypeThirdQuartile = "thirdQuartile"
 
 	// The creative was played to the end at normal speed.
-	Event_type_complete = "complete"
+	EventTypeComplete = "complete"
 
 	// the user activated the mute control and muted the creative.
-	Event_type_mute = "mute"
+	EventTypeMute = "mute"
 
 	// the user activated the mute control and unmuted the creative.
-	Event_type_unmute = "unmute"
+	EventTypeUnmute = "unmute"
 
 	// the user clicked the pause control and stopped the creative.
-	Event_type_pause = "pause"
+	EventTypePause = "pause"
 
 	// the user activated the rewind control to access a previous point in the creative timeline.
-	Event_type_rewind = "rewind"
+	EventTypeRewind = "rewind"
 
 	// the user activated the resume control after the creative had been stopped or paused.
-	Event_type_resume = "resume"
+	EventTypeResume = "resume"
 
 	// the user activated a control to extend the video player to the edges of the viewer’s screen.
-	Event_type_fullscreen = "fullscreen"
+	EventTypeFullscreen = "fullscreen"
 
 	// the user activated the control to reduce video player size to original dimensions.
-	Event_type_exitFullscreen = "exitFullscreen"
+	EventTypeExitFullscreen = "exitFullscreen"
 
 	// the user activated a control to expand the creative.
-	Event_type_expand = "expand"
+	EventTypeExpand = "expand"
 
 	// the user activated a control to reduce the creative to its original dimensions.
-	Event_type_collapse = "collapse"
+	EventTypeCollapse = "collapse"
 
 	/**
 	 * the user activated a control that launched an additional portion of the
@@ -64,7 +64,7 @@ const (
 	 * metric as applying to non-linear ads only. The “acceptInvitationLinear” event extends the metric for use
 	 * in Linear creative.
 	 */
-	Event_type_acceptInvitationLinear = "acceptInvitationLinear"
+	EventTypeAcceptInvitationLinear = "acceptInvitationLinear"
 
 	/**
 	 * the user clicked the close button on the creative. The name of this event distinguishes it
@@ -72,20 +72,20 @@ const (
 	 * Definitions, which defines the “close” metric as applying to non-linear ads only. The “closeLinear” event
 	 * extends the “close” event for use in Linear creative.
 	 */
-	Event_type_closeLinear = "closeLinear"
+	EventTypeCloseLinear = "closeLinear"
 
-	Event_type_close = "close"
+	EventTypeClose = "close"
 
 	// the user activated a skip control to skip the creative, which is a
 	// different control than the one used to close the creative.
-	Event_type_skip = "skip"
+	EventTypeSkip = "skip"
 
 	/**
 	 * the creative played for a duration at normal speed that is equal to or greater than the
 	 * value provided in an additional attribute for offset . Offset values can be time in the format
 	 * HH:MM:SS or HH:MM:SS.mmm or a percentage value in the format n% . Multiple progress ev
 	 */
-	Event_type_progress = "progress"
+	EventTypeProgress = "progress"
 
-	Event_type_monitor = "monitor"
+	EventTypeMonitor = "monitor"
 )

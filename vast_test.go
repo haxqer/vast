@@ -3,7 +3,7 @@ package vast
 import (
 	"encoding/json"
 	"encoding/xml"
-	"github.com/pquerna/ffjson/ffjson"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"reflect"
@@ -11,8 +11,106 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pquerna/ffjson/ffjson"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestQuickStartComplex(t *testing.T) {
+	skip := Duration(5 * time.Second)
+	v := VAST{
+		Version: "4.2",
+		Ads: []Ad{
+			{
+				ID:            "123",
+				Type:          "front",
+				AdType:        "video",
+				ConditionalAd: false,
+				InLine: &InLine{
+					AdSystem: &AdSystem{Name: "DSP"},
+					AdTitle:  PlainString{CDATA: "adTitle"},
+					Impressions: []Impression{
+						{ID: "11111", URI: "http://impressionv1.track.com"},
+						{ID: "11112", URI: "http://impressionv2.track.com"},
+					},
+					Category: &[]Category{
+						{Authority: "https://www.iabtechlab.com/categoryauthority", Category: "American Cuisine"},
+						{Authority: "https://www.iabtechlab.com/categoryauthority", Category: "Guitar"},
+					},
+					Description: &CDATAString{"123"},
+					ViewableImpression: &ViewableImpression{
+						ID: "1234",
+						Viewable: &[]CDATAString{
+							{CDATA: "http://viewable1.track.com"},
+							{CDATA: "http://viewable2.track.com"},
+						},
+						NotViewable: &[]CDATAString{
+							{CDATA: "http://notviewable1.track.com"},
+							{CDATA: "http://notviewable2.track.com"},
+						},
+						ViewUndetermined: &[]CDATAString{
+							{CDATA: "http://viewundetermined1.track.com"},
+							{CDATA: "http://viewundetermined2.track.com"},
+						},
+					},
+					Creatives: []Creative{
+						{
+							ID:       "987",
+							Sequence: 0,
+							AdID:     "12",
+							UniversalAdID: &[]UniversalAdID{
+								{
+									IDRegistry: "Ad-ID",
+									ID:         "8465",
+								},
+								{
+									IDRegistry: "FOO-ID",
+									ID:         "6666465",
+								},
+							},
+							Linear: &Linear{
+								SkipOffset: &Offset{
+									Duration: &skip,
+								},
+								Duration: Duration(15 * time.Second),
+								TrackingEvents: []Tracking{
+									{Event: EventTypeStart, URI: "http://track.xxx.com/q/start?xx"},
+									{Event: EventTypeFirstQuartile, URI: "http://track.xxx.com/q/firstQuartile?xx"},
+									{Event: EventTypeMidpoint, URI: "http://track.xxx.com/q/midpoint?xx"},
+									{Event: EventTypeThirdQuartile, URI: "http://track.xxx.com/q/thirdQuartile?xx"},
+									{Event: EventTypeComplete, URI: "http://track.xxx.com/q/complete?xx"},
+								},
+								MediaFiles: []MediaFile{
+									{
+										Delivery: "progressive",
+										Type:     "video/mp4",
+										Width:    1024,
+										Height:   576,
+										URI:      "http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4",
+										Label:    "123",
+									},
+								},
+							},
+						},
+					},
+					Extensions: &[]Extension{
+						{
+							Type: "ClassName",
+							Data: "AdsVideoView",
+						},
+						{
+							Type: "ExtURL",
+							Data: "http://xxxxxxxx",
+						},
+					},
+				},
+			},
+		},
+	} //vastXMLText, _ := xml.Marshal(v)
+	//fmt.Printf("%s", vastXMLText)
+
+	out, _ := xml.MarshalIndent(v, " ", "  ")
+	fmt.Println(string(out))
+}
 
 func TestQuickStart(t *testing.T) {
 	d := Duration(5 * time.Second)
@@ -21,10 +119,10 @@ func TestQuickStart(t *testing.T) {
 		Version: "3.0",
 		Ads: []Ad{
 			{
-				ID:   "123",
+				ID: "123",
 				InLine: &InLine{
 					AdSystem: &AdSystem{Name: "DSP"},
-					AdTitle:  CDATAString{CDATA: "adTitle"},
+					AdTitle:  PlainString{CDATA: "adTitle"},
 					Impressions: []Impression{
 						{ID: "11111", URI: "http://impressionv1.track.com"},
 						{ID: "11112", URI: "http://impressionv2.track.com"},
@@ -39,11 +137,11 @@ func TestQuickStart(t *testing.T) {
 								},
 								Duration: Duration(15 * time.Second),
 								TrackingEvents: []Tracking{
-									{Event: Event_type_start, URI: "http://track.xxx.com/q/start?xx"},
-									{Event: Event_type_firstQuartile, URI: "http://track.xxx.com/q/firstQuartile?xx"},
-									{Event: Event_type_midpoint, URI: "http://track.xxx.com/q/midpoint?xx"},
-									{Event: Event_type_thirdQuartile, URI: "http://track.xxx.com/q/thirdQuartile?xx"},
-									{Event: Event_type_complete, URI: "http://track.xxx.com/q/complete?xx"},
+									{Event: EventTypeStart, URI: "http://track.xxx.com/q/start?xx"},
+									{Event: EventTypeFirstQuartile, URI: "http://track.xxx.com/q/firstQuartile?xx"},
+									{Event: EventTypeMidpoint, URI: "http://track.xxx.com/q/midpoint?xx"},
+									{Event: EventTypeThirdQuartile, URI: "http://track.xxx.com/q/thirdQuartile?xx"},
+									{Event: EventTypeComplete, URI: "http://track.xxx.com/q/complete?xx"},
 								},
 								MediaFiles: []MediaFile{
 									{
@@ -131,10 +229,10 @@ func createVastDemo() (*VAST, error) {
 		XMLNS:   "http://www.iab.com/VAST",
 		Ads: []Ad{
 			{
-				ID:   adId,
+				ID: adId,
 				InLine: &InLine{
 					AdSystem: &AdSystem{Name: "DSP"},
-					AdTitle:  CDATAString{CDATA: adTitle},
+					AdTitle:  PlainString{CDATA: adTitle},
 					Impressions: []Impression{
 						{ID: impressionId, URI: impressionURI},
 					},
@@ -146,7 +244,7 @@ func createVastDemo() (*VAST, error) {
 								Duration: seconds,
 								TrackingEvents: []Tracking{
 									{
-										Event:  Event_type_start,
+										Event:  EventTypeStart,
 										Offset: nil,
 										URI:    "http://track.xxx.com/q/start?xx",
 										UA:     "",
@@ -239,7 +337,7 @@ func TestCreateVastXML(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		{name: "testCase1", want: []byte(`<VAST version="3.0" xmlns="http://www.iab.com/VAST"><Ad id="123"><InLine><AdSystem><![CDATA[DSP]]></AdSystem><Impression id="456"><![CDATA[http://impression.track.cn]]></Impression><AdTitle><![CDATA[ad title]]></AdTitle><Creatives><Creative id="123456"><Linear><TrackingEvents><Tracking event="start"><![CDATA[http://track.xxx.com/q/start?xx]]></Tracking></TrackingEvents><Duration>00:00:15</Duration><MediaFiles><MediaFile delivery="progressive" type="video/mp4" width="1024" height="576"><![CDATA[http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4]]></MediaFile></MediaFiles></Linear></Creative></Creatives></InLine></Ad></VAST>`),
+		{name: "testCase1", want: []byte(`<VAST version="3.0"><Ad id="123" type="front"><InLine><AdSystem>DSP</AdSystem><AdTitle>ad title</AdTitle><Impression id="456"><![CDATA[http://impression.track.cn]]></Impression><Creatives><Creative id="123456"><Linear><Duration>00:00:15</Duration><TrackingEvents><Tracking event="start"><![CDATA[http://track.xxx.com/q/start?xx]]></Tracking></TrackingEvents><MediaFiles><MediaFile delivery="progressive" type="video/mp4" width="1024" height="576"><![CDATA[http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4]]></MediaFile></MediaFiles></Linear></Creative></Creatives></InLine></Ad></VAST>`),
 			wantErr: false},
 	}
 	for _, tt := range tests {
@@ -282,7 +380,6 @@ func TestCreativeExtensions(t *testing.T) {
 	if !assert.NoError(t, err) {
 		return
 	}
-
 	assert.Equal(t, "3.0", v.Version)
 	if assert.Len(t, v.Ads, 1) {
 		ad := v.Ads[0]
