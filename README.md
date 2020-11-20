@@ -6,6 +6,9 @@ XML/Json
 
 :star: VAST Ad generator and parser library on GoLang.
 
+## todo
+- [x] Support for all TrackEvents
+
 ## Specs
 * VAST 2.0 Spec: http://www.iab.net/media/file/VAST-2_0-FINAL.pdf
 * VAST 3.0 Spec: http://www.iab.com/wp-content/uploads/2015/06/VASTv3_0.pdf

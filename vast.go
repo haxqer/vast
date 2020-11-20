@@ -112,6 +112,11 @@ type InLine struct {
 	//for both the InLine ad and any Wrappers, using the <ViewableImpression> element.
 	//Tracking URIs may be provided in three containers: <Viewable>, <NotViewable>, and <ViewUndetermined>.
 	ViewableImpression *ViewableImpression `xml:"ViewableImpression,omitempty" json:"ViewableImpression,omitempty"`
+	// The <AdVerifications> element contains one or more <Verification> elements,
+	// which list the resources and metadata required to execute third-party measurement code in order to verify creative playback.
+	// The <AdVerifications> element is used to contain one or more <Verification> elements,
+	// which are used to initiate a controlled container where code can be executed for collecting data to verify ad playback details.
+	AdVerifications *[]Verification `xml:",omitempty" json:",omitempty"`
 }
 
 // Impression is a URI that directs the video player to a tracking resource file that
