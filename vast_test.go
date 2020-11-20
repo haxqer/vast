@@ -79,14 +79,15 @@ func TestQuickStartComplex(t *testing.T) {
 									{Event: EventTypeThirdQuartile, URI: "http://track.xxx.com/q/thirdQuartile?xx"},
 									{Event: EventTypeComplete, URI: "http://track.xxx.com/q/complete?xx"},
 								},
-								MediaFiles: []MediaFile{
-									{
-										Delivery: "progressive",
-										Type:     "video/mp4",
-										Width:    1024,
-										Height:   576,
-										URI:      "http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4",
-										Label:    "123",
+								MediaFiles: &MediaFiles{
+									MediaFile: &[]MediaFile{
+										{
+											Delivery: "progressive",
+											Type:     "video/mp4",
+											Width:    1024,
+											Height:   576,
+											URI:      "http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4",
+										},
 									},
 								},
 							},
@@ -143,13 +144,16 @@ func TestQuickStart(t *testing.T) {
 									{Event: EventTypeThirdQuartile, URI: "http://track.xxx.com/q/thirdQuartile?xx"},
 									{Event: EventTypeComplete, URI: "http://track.xxx.com/q/complete?xx"},
 								},
-								MediaFiles: []MediaFile{
-									{
-										Delivery: "progressive",
-										Type:     "video/mp4",
-										Width:    1024,
-										Height:   576,
-										URI:      "http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4",
+								MediaFiles: &MediaFiles{
+									MediaFile: &[]MediaFile{
+										{
+											Delivery: "progressive",
+											Type:     "video/mp4",
+											Width:    1024,
+											Height:   576,
+											URI:      "http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4",
+											Label:    "123",
+										},
 									},
 								},
 							},
@@ -170,7 +174,7 @@ func TestQuickStart(t *testing.T) {
 		},
 	}
 
-	want := []byte(`{"Version":"3.0","Ad":[{"InLine":{"AdSystem":{"Data":"DSP"},"Extensions":[{"Type":"ClassName","Data":"AdsVideoView"},{"Type":"ExtURL","Data":"http://xxxxxxxx"}],"Impressions":[{"ID":"11111","URI":"http://impressionv1.track.com"},{"ID":"11112","URI":"http://impressionv2.track.com"}],"AdTitle":{"Data":"adTitle"},"Creatives":[{"ID":"987","Linear":{"SkipOffset":"00:00:05","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"},{"Event":"firstQuartile","URI":"http://track.xxx.com/q/firstQuartile?xx"},{"Event":"midpoint","URI":"http://track.xxx.com/q/midpoint?xx"},{"Event":"thirdQuartile","URI":"http://track.xxx.com/q/thirdQuartile?xx"},{"Event":"complete","URI":"http://track.xxx.com/q/complete?xx"}],"Duration":"00:00:15","MediaFiles":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4"}]}}]},"ID":"123"}],"Mute":true}`)
+	want := []byte(`{"Version":"3.0","Ad":[{"ID":"123","Type":"front","InLine":{"AdSystem":{"Data":"DSP"},"AdTitle":{"Data":"adTitle"},"Impressions":[{"ID":"11111","URI":"http://impressionv1.track.com"},{"ID":"11112","URI":"http://impressionv2.track.com"}],"Creatives":[{"ID":"987","Linear":{"SkipOffset":"00:00:05","Duration":"00:00:15","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"},{"Event":"firstQuartile","URI":"http://track.xxx.com/q/firstQuartile?xx"},{"Event":"midpoint","URI":"http://track.xxx.com/q/midpoint?xx"},{"Event":"thirdQuartile","URI":"http://track.xxx.com/q/thirdQuartile?xx"},{"Event":"complete","URI":"http://track.xxx.com/q/complete?xx"}],"MediaFiles":{"MediaFile":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4","Label":"123"}]}}}],"Extensions":[{"Type":"ClassName","Data":"AdsVideoView"},{"Type":"ExtURL","Data":"http://xxxxxxxx"}]}}],"Mute":true}`)
 	got, err := json.Marshal(v)
 	t.Logf("%s", got)
 	if err != nil {
@@ -178,7 +182,7 @@ func TestQuickStart(t *testing.T) {
 		return
 	}
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("Marshal() got = %v, want %v", got, want)
+		t.Errorf("\n got = %s,  \nwant = %s", got, want)
 	}
 
 }
@@ -250,13 +254,16 @@ func createVastDemo() (*VAST, error) {
 										UA:     "",
 									},
 								},
-								MediaFiles: []MediaFile{
-									{
-										Delivery: "progressive",
-										Type:     mediaType,
-										Width:    1024,
-										Height:   576,
-										URI:      mediaURI,
+								MediaFiles: &MediaFiles{
+									MediaFile: &[]MediaFile{
+										{
+											Delivery: "progressive",
+											Type:     mediaType,
+											Width:    1024,
+											Height:   576,
+											URI:      mediaURI,
+											Label:    "123",
+										},
 									},
 								},
 							},
@@ -313,7 +320,7 @@ func TestCreateVastJson(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		{name: "testCase1", want: []byte(`{"Version":"3.0","xmlns":"http://www.iab.com/VAST","Ad":[{"InLine":{"AdSystem":{"Data":"DSP"},"Impressions":[{"ID":"456","URI":"http://impression.track.cn"}],"AdTitle":{"Data":"ad title"},"Creatives":[{"ID":"123456","Linear":{"TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"}],"Duration":"00:00:15","MediaFiles":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4"}]}}]},"ID":"123"}]}`),
+		{name: "testCase1", want: []byte(`{"Version":"3.0","Ad":[{"ID":"123","Type":"front","InLine":{"AdSystem":{"Data":"DSP"},"AdTitle":{"Data":"ad title"},"Impressions":[{"ID":"456","URI":"http://impression.track.cn"}],"Creatives":[{"ID":"123456","Linear":{"Duration":"00:00:15","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"}],"MediaFiles":{"MediaFile":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4","Label":"123"}]}}}]}}]}`),
 			wantErr: false},
 	}
 	for _, tt := range tests {
@@ -325,7 +332,7 @@ func TestCreateVastJson(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Marshal() got = %v, want %v", got, tt.want)
+				t.Errorf("\ngot  %s \nwant %s", got, tt.want)
 			}
 		})
 	}
@@ -337,7 +344,7 @@ func TestCreateVastXML(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		{name: "testCase1", want: []byte(`<VAST version="3.0"><Ad id="123" type="front"><InLine><AdSystem>DSP</AdSystem><AdTitle>ad title</AdTitle><Impression id="456"><![CDATA[http://impression.track.cn]]></Impression><Creatives><Creative id="123456"><Linear><Duration>00:00:15</Duration><TrackingEvents><Tracking event="start"><![CDATA[http://track.xxx.com/q/start?xx]]></Tracking></TrackingEvents><MediaFiles><MediaFile delivery="progressive" type="video/mp4" width="1024" height="576"><![CDATA[http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4]]></MediaFile></MediaFiles></Linear></Creative></Creatives></InLine></Ad></VAST>`),
+		{name: "testCase1", want: []byte(`<VAST version="3.0"><Ad id="123" type="front"><InLine><AdSystem>DSP</AdSystem><AdTitle>ad title</AdTitle><Impression id="456"><![CDATA[http://impression.track.cn]]></Impression><Creatives><Creative id="123456"><Linear><Duration>00:00:15</Duration><TrackingEvents><Tracking event="start"><![CDATA[http://track.xxx.com/q/start?xx]]></Tracking></TrackingEvents><MediaFiles><MediaFile delivery="progressive" type="video/mp4" width="1024" height="576" label="123"><![CDATA[http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4]]></MediaFile></MediaFiles></Linear></Creative></Creatives></InLine></Ad></VAST>`),
 			wantErr: false},
 	}
 	for _, tt := range tests {
@@ -349,7 +356,7 @@ func TestCreateVastXML(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Marshal() got = %v, want %v", got, tt.want)
+				t.Errorf("\ngot  %s \nwant %s", got, tt.want)
 			}
 		})
 	}
@@ -521,15 +528,15 @@ func TestInlineLinear(t *testing.T) {
 						assert.Len(t, linear.VideoClicks.CustomClicks, 0)
 					}
 					if assert.Len(t, linear.MediaFiles, 1) {
-						mf := linear.MediaFiles[0]
-						assert.Equal(t, "progressive", mf.Delivery)
-						assert.Equal(t, "video/x-flv", mf.Type)
-						assert.Equal(t, 500, mf.Bitrate)
-						assert.Equal(t, 400, mf.Width)
-						assert.Equal(t, 300, mf.Height)
-						assert.Equal(t, true, mf.Scalable)
-						assert.Equal(t, true, mf.MaintainAspectRatio)
-						assert.Equal(t, "http://cdnp.tremormedia.com/video/acudeo/Carrot_400x300_500kb.flv", mf.URI)
+						mf := *linear.MediaFiles.MediaFile
+						assert.Equal(t, "progressive", mf[0].Delivery)
+						assert.Equal(t, "video/x-flv", mf[0].Type)
+						assert.Equal(t, 500, mf[0].Bitrate)
+						assert.Equal(t, 400, mf[0].Width)
+						assert.Equal(t, 300, mf[0].Height)
+						assert.Equal(t, true, mf[0].Scalable)
+						assert.Equal(t, true, mf[0].MaintainAspectRatio)
+						assert.Equal(t, "http://cdnp.tremormedia.com/video/acudeo/Carrot_400x300_500kb.flv", mf[0].URI)
 					}
 				}
 
@@ -813,12 +820,12 @@ func TestSpotXVpaid(t *testing.T) {
 					b, _ := ioutil.ReadAll(adParam)
 					assert.Equal(t, linear.AdParameters.Parameters, string(b))
 					if assert.Len(t, crea1.Linear.MediaFiles, 1) {
-						media1 := crea1.Linear.MediaFiles[0]
-						assert.Equal(t, "progressive", media1.Delivery)
-						assert.Equal(t, "application/javascript", media1.Type)
-						assert.Equal(t, 300, media1.Width)
-						assert.Equal(t, 250, media1.Height)
-						assert.Equal(t, "https://cdn.spotxcdn.com/integration/instreamadbroker/v1/instreamadbroker/beta.js", media1.URI)
+						media1 := *crea1.Linear.MediaFiles.MediaFile
+						assert.Equal(t, "progressive", media1[0].Delivery)
+						assert.Equal(t, "application/javascript", media1[0].Type)
+						assert.Equal(t, 300, media1[0].Width)
+						assert.Equal(t, 250, media1[0].Height)
+						assert.Equal(t, "https://cdn.spotxcdn.com/integration/instreamadbroker/v1/instreamadbroker/beta.js", media1[0].URI)
 					}
 				}
 				crea2 := inline.Creatives[1]
@@ -903,12 +910,12 @@ func TestExtraSpacesVpaid(t *testing.T) {
 
 					assert.Equal(t, "        \n                  <VAST></VAST>\n                  \n                  ", linear.AdParameters.Parameters)
 					if assert.Len(t, crea1.Linear.MediaFiles, 1) {
-						media1 := crea1.Linear.MediaFiles[0]
-						assert.Equal(t, "progressive", media1.Delivery)
-						assert.Equal(t, "application/javascript", media1.Type)
-						assert.Equal(t, 300, media1.Width)
-						assert.Equal(t, 250, media1.Height)
-						assert.Equal(t, "\n                     https://dummy.com/dummmy.js             \n                     ", media1.URI)
+						media1 := *crea1.Linear.MediaFiles.MediaFile
+						assert.Equal(t, "progressive", media1[0].Delivery)
+						assert.Equal(t, "application/javascript", media1[0].Type)
+						assert.Equal(t, 300, media1[0].Width)
+						assert.Equal(t, 250, media1[0].Height)
+						assert.Equal(t, "\n                     https://dummy.com/dummmy.js             \n                     ", media1[0].URI)
 					}
 				}
 			}
@@ -938,16 +945,16 @@ func TestIcons(t *testing.T) {
 				crea1 := inline.Creatives[0]
 				if assert.NotNil(t, crea1.Linear) {
 					if assert.Len(t, crea1.Linear.Icons.Icon, 1) {
-						icon1 := crea1.Linear.Icons.Icon[0]
-						assert.Equal(t, "DAA", icon1.Program)
-						assert.Equal(t, 77, icon1.Width)
-						assert.Equal(t, 15, icon1.Height)
-						assert.Equal(t, "right", icon1.XPosition)
-						assert.Equal(t, "top", icon1.YPosition)
-						if assert.NotNil(t, icon1.StaticResource) {
-							assert.Equal(t, "image/png", icon1.StaticResource.CreativeType)
-							assert.Equal(t, "https://s.aolcdn.com/ads/adchoices.png", icon1.StaticResource.URI)
-							assert.Equal(t, "https://adinfo.aol.com", icon1.IconClickThrough.CDATA)
+						icon1 := *crea1.Linear.Icons.Icon
+						assert.Equal(t, "DAA", icon1[0].Program)
+						assert.Equal(t, 77, icon1[0].Width)
+						assert.Equal(t, 15, icon1[0].Height)
+						assert.Equal(t, "right", icon1[0].XPosition)
+						assert.Equal(t, "top", icon1[0].YPosition)
+						if assert.NotNil(t, icon1[0].StaticResource) {
+							assert.Equal(t, "image/png", icon1[0].StaticResource.CreativeType)
+							assert.Equal(t, "https://s.aolcdn.com/ads/adchoices.png", icon1[0].StaticResource.URI)
+							assert.Equal(t, "https://adinfo.aol.com", icon1[0].IconClickThrough.CDATA)
 						}
 					}
 				}
@@ -971,8 +978,9 @@ func TestUniversalAdID(t *testing.T) {
 				if assert.Len(t, ad.InLine.Creatives, 1) {
 					if assert.NotNil(t, ad.InLine.Creatives[0].UniversalAdID) {
 						creative := ad.InLine.Creatives[0]
-						assert.Equal(t, "Ad-ID", creative.UniversalAdID.IDRegistry)
-						assert.Equal(t, "8465", creative.UniversalAdID.ID)
+						universalAdID := *creative.UniversalAdID
+						assert.Equal(t, "Ad-ID", universalAdID[0].IDRegistry)
+						assert.Equal(t, "8465", universalAdID[0].ID)
 					}
 				}
 			}
