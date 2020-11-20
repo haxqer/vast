@@ -21,3 +21,18 @@ type Advertiser struct {
 	// Recommend using the domain of the advertiser.
 	Advertiser string `xml:",chardata"`
 }
+
+// The <Verification> element contains the executable and bootstrapping data required to run the measurement code for a single verification vendor.
+// Multiple <Verification> elements may be listed, in order to support multiple vendors, or if multiple API frameworks are supported.
+// At least one <JavaScriptResource> or <ExecutableResource> should be provided.
+// At most one of these resources should selected for execution, as best matches the technology available in the current environment.
+type Verification struct {
+	// An identifier for the verification vendor. The recommended format is [domain]- [useCase], to avoid name collisions. For example, "company.com-omid".
+	Vendor string `xml:"vendor,attr"`
+
+}
+
+// A container for the URI to the JavaScript file used to collect verification data.
+type JavaScriptResource struct {
+
+}
