@@ -151,7 +151,7 @@ type Wrapper struct {
 	AdSystem *AdSystem
 	// A URI representing an error-tracking pixel; this element can occur multiple
 	// times.
-	Errors []CDATAString `xml:"Error,omitempty" json:"Error,omitempty"`
+	Errors []CDATAString `xml:",omitempty" json:",omitempty"`
 	// XML node for custom extensions, as defined by the ad server. When used, a
 	// custom element should be nested under <Extensions> to help separate custom
 	// XML elements from VAST elements. The following example includes a custom
@@ -160,10 +160,24 @@ type Wrapper struct {
 	// One or more URIs that directs the video player to a tracking resource file that the
 	// video player should request when the first frame of the ad is displayed
 	Impressions []Impression `xml:"Impression"`
-	// URL of ad tag of downstream Secondary Ad Server
 	// The container for one or more <Creative> elements
-	Creatives                []CreativeWrapper `xml:"Creatives>Creative"`
-	VASTAdTagURI             CDATAString
+	Creatives []CreativeWrapper `xml:"Creatives>Creative"`
+	// URL of ad tag of downstream Secondary Ad Server
+	VASTAdTagURI CDATAString
+	// Provides a value that represents a price that can be used by real-time bidding
+	// (RTB) systems. VAST is not designed to handle RTB since other methods exist,
+	// but this element is offered for custom solutions if needed.
+	Pricing *Pricing `xml:",omitempty" json:",omitempty"`
+	// The ad server may provide URIs for tracking publisher-determined viewability,
+	// for both the InLine ad and any Wrappers, using the <ViewableImpression> element.
+	// Tracking URIs may be provided in three containers: <Viewable>, <NotViewable>, and <ViewUndetermined>.
+	ViewableImpression *ViewableImpression `xml:",omitempty" json:",omitempty"`
+	// The <AdVerifications> element contains one or more <Verification> elements,
+	// which list the resources and metadata required to execute third-party measurement code in order to verify creative playback.
+	// The <AdVerifications> element is used to contain one or more <Verification> elements,
+	// which are used to initiate a controlled container where code can be executed for collecting data to verify ad playback details.
+	AdVerifications []Verification `xml:",omitempty" json:",omitempty"`
+
 	FallbackOnNoAd           *bool `xml:"fallbackOnNoAd,attr,omitempty" json:",omitempty"`
 	AllowMultipleAds         *bool `xml:"allowMultipleAds,attr,omitempty" json:",omitempty"`
 	FollowAdditionalWrappers *bool `xml:"followAdditionalWrappers,attr,omitempty" json:",omitempty"`
@@ -454,18 +468,31 @@ type Icon struct {
 	Duration Duration `xml:"duration,attr"`
 	// The apiFramework defines the method to use for communication with the icon element
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
-	// HTML to display the companion element
-	HTMLResource *HTMLResource `xml:",omitempty" json:",omitempty"`
-	// URL source for an IFrame to display the companion element
-	IFrameResource *CDATAString `xml:",omitempty" json:",omitempty"`
-	// URL to a static file, such as an image or SWF file
-	StaticResource *StaticResource `xml:",omitempty" json:",omitempty"`
+	// The pixel ratio for which the icon creative is intended.
+	// The pixel ratio is the ratio of physical pixels on the device to the device-independent pixels.
+	// An ad intended for display on a device with a pixel ratio that is twice that of a standard 1:1 pixel ratio would use the value "2."
+	// Default value is "1."
+	Pxratio string `xml:"pxratio,attr,omitempty" json:",omitempty"`
+	// Alternative text for the image.
+	// In an html5 image tag this should be the text for the alt attribute.
+	// This should enable screen readers to properly read back a description of the icon for visually impaired users.
+	AltText string `xml:"altText,attr,omitempty" json:",omitempty"`
+	// Hover text for the image.
+	// In an html5 image tag this should be the text for the title attribute.
+	HoverText string `xml:"hoverText,attr,omitempty" json:",omitempty"`
+	// The view tracking for icons is used to track when the icon creative is displayed.
+	// The player uses the included URI to notify the icon server when the icon has been displayed.
+	IconViewTracking []CDATAString `xml:",omitempty" json:",omitempty"`
 	// URL to open as destination page when user clicks on the icon.
 	IconClickThrough *CDATAString `xml:"IconClicks>IconClickThrough,omitempty" json:",omitempty"`
 	// URLs to ping when user clicks on the the icon.
-	IconClickTrackings []CDATAString `xml:"IconClicks>IconClickTracking,omitempty" json:",omitempty"`
-	// A URI for the tracking resource file to be called when the icon creative is displayed.
-	IconViewTracking *CDATAString `xml:"IconViewTracking,omitempty" json:",omitempty"`
+	IconClickTracking []CDATAString `xml:"IconClicks>IconClickTracking,omitempty" json:",omitempty"`
+	// URL to a static file, such as an image or SWF file
+	StaticResource *StaticResource `xml:",omitempty" json:",omitempty"`
+	// URL source for an IFrame to display the companion element
+	IFrameResource *CDATAString `xml:",omitempty" json:",omitempty"`
+	// HTML to display the companion element
+	HTMLResource *HTMLResource `xml:",omitempty" json:",omitempty"`
 }
 
 // <Tracking> defines an event tracking URL
