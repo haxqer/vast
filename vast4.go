@@ -42,14 +42,16 @@ type Verification struct {
 	// Some verification vendors may provide JavaScript executables which work in non-browser environments,
 	// for example, in an iOS app enabled by JavaScriptCore. These resources only require methods of the API framework,
 	// without relying on any browser built-in functionality.
-	JavaScriptResource *[]JavaScriptResource
+	JavaScriptResource []JavaScriptResource
 	// A reference to a non-JavaScript or custom-integration resource intended for collecting verification data via the listed apiFramework.
-	ExecutableResource *[]ExecutableResource
+	ExecutableResource []ExecutableResource
 	// The verification vendor may provide URIs for tracking events relating to the execution of their code during the ad session.
-	TrackingEvents *[]Tracking `xml:"TrackingEvents>Tracking,omitempty"`
+	TrackingEvents []Tracking `xml:"TrackingEvents>Tracking,omitempty"`
 	// <VerificationParameters> contains a CDATA-wrapped string intended for bootstrapping the verification code and providing metadata about the current impression.
 	// The format of the string is up to the individual vendor and should be passed along verbatim.
 	VerificationParameters string `xml:",omitempty"`
+	// ad categories are used in creative separation and for compliance in certain programs
+	BlockedAdCategories []Category `xml:",omitempty"`
 }
 
 // A container for the URI to the JavaScript file used to collect verification data.
