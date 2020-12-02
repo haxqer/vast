@@ -483,9 +483,9 @@ type AdParameters struct {
 
 // VideoClicks contains types of video clicks
 type VideoClicks struct {
-	ClickThroughs  []VideoClick `xml:"ClickThrough,omitempty" json:",omitempty"`
 	ClickTrackings []VideoClick `xml:"ClickTracking,omitempty" json:",omitempty"`
 	CustomClicks   []VideoClick `xml:"CustomClick,omitempty" json:",omitempty"`
+	ClickThroughs  []VideoClick `xml:"ClickThrough,omitempty" json:",omitempty"`
 }
 
 // VideoClick defines a click URL for a linear creative
