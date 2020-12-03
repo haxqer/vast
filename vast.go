@@ -252,7 +252,7 @@ type Linear struct {
 	Icons          *Icons        `json:",omitempty"`
 	TrackingEvents []Tracking    `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
 	// Duration in standard time format, hh:mm:ss
-	Duration       Duration
+	Duration       Duration		 `xml:"Duration,omitempty" json:",omitempty"`
 	MediaFiles     []MediaFile   `xml:"MediaFiles>MediaFile,omitempty" json:",omitempty"`
 	VideoClicks    *VideoClicks  `xml:",omitempty" json:",omitempty"`
 }
