@@ -53,8 +53,6 @@ type CDATAString struct {
 type InLine struct {
 	// The name of the ad server that returned the ad
 	AdSystem *AdSystem
-	// The common name of the ad
-	AdTitle CDATAString
 	// One or more URIs that directs the video player to a tracking resource file that the
 	// video player should request when the first frame of the ad is displayed
 	Impressions []Impression `xml:"Impression"`
@@ -62,6 +60,8 @@ type InLine struct {
 	// that is appropriate for all involved parties to track the lifecycle of that ad.
 	// Example: ServerName-47ed3bac-1768-4b9a-9d0e-0b92422ab066
 	AdServingId string `xml:",omitempty" json:",omitempty"`
+	// The common name of the ad
+	AdTitle CDATAString
 	// The container for one or more <Creative> elements
 	Creatives []Creative `xml:"Creatives>Creative"`
 	// A string value that provides a longer description of the ad.
@@ -162,14 +162,14 @@ type Creative struct {
 	AdID string `xml:"AdID,attr,omitempty" json:",omitempty"`
 	// The technology used for any included API
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
+	// If present, provides a VAST 4.x universal ad id
+	UniversalAdID *UniversalAdID `xml:"UniversalAdId,omitempty" json:",omitempty"`
 	// If present, defines a linear creative
 	Linear *Linear `xml:",omitempty" json:",omitempty"`
 	// If defined, defins companions creatives
 	CompanionAds *CompanionAds `xml:",omitempty" json:",omitempty"`
 	// If defined, defines non linear creatives
 	NonLinearAds *NonLinearAds `xml:",omitempty" json:",omitempty"`
-	// If present, provides a VAST 4.x universal ad id
-	UniversalAdID *UniversalAdID `xml:"UniversalAdId,omitempty" json:",omitempty"`
 	// When an API framework is needed to execute creative, a
 	// <CreativeExtensions> element can be added under the <Creative>. This
 	// extension can be used to load an executable creative with or without using
@@ -248,13 +248,13 @@ type Linear struct {
 	// indicates when the skip control should be provided after the creative
 	// begins playing.
 	SkipOffset *Offset `xml:"skipoffset,attr,omitempty" json:",omitempty"`
-	// Duration in standard time format, hh:mm:ss
-	Duration       Duration
 	AdParameters   *AdParameters `xml:",omitempty" json:",omitempty"`
 	Icons          *Icons        `json:",omitempty"`
 	TrackingEvents []Tracking    `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
-	VideoClicks    *VideoClicks  `xml:",omitempty" json:",omitempty"`
+	// Duration in standard time format, hh:mm:ss
+	Duration       Duration
 	MediaFiles     []MediaFile   `xml:"MediaFiles>MediaFile,omitempty" json:",omitempty"`
+	VideoClicks    *VideoClicks  `xml:",omitempty" json:",omitempty"`
 }
 
 // LinearWrapper defines a wrapped linear creative
@@ -539,6 +539,6 @@ type MediaFile struct {
 // UniversalAdID describes a VAST 4.x universal ad id.
 type UniversalAdID struct {
 	IDRegistry string `xml:"idRegistry,attr"`
-	IDValue    string `xml:"idValue,attr"`
+	IDValue    string `xml:"idValue,attr,omitempty"`
 	ID         string `xml:",cdata"`
 }
