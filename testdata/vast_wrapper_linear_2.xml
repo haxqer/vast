@@ -6,13 +6,13 @@
     <VASTAdTagURI>http://demo.tremormedia.com/proddev/vast/vast_inline_linear.xml</VASTAdTagURI>
     <Impression>http://myTrackingURL/wrapper/impression</Impression>
 	<Creatives>
-		<Creative AdID="602833">
+		<Creative adId="602833">
 			<Linear>
 				<TrackingEvents>
 				</TrackingEvents>
 			</Linear>
 		</Creative>
-		<Creative AdID="602833-Companion">
+		<Creative adId="602833-Companion">
 			<CompanionAds>
 				<Companion width="300" height="250">
 					<StaticResource creativeType="image/jpeg">http://demo.tremormedia.com/proddev/vast/300x250_banner1.jpg</StaticResource>

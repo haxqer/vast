@@ -9,7 +9,7 @@
     <Error>http://myErrorURL/error</Error>
     <Impression>http://myTrackingURL/impression</Impression>
 	<Creatives>
-		<Creative AdID="602678-NonLinear">
+		<Creative adId="602678-NonLinear">
 			<NonLinearAds>
 				<TrackingEvents>
 					<Tracking event="creativeView">http://myTrackingURL/nonlinear/creativeView</Tracking>
@@ -32,7 +32,7 @@
 				</NonLinear>
 			</NonLinearAds>
 		</Creative>
-		<Creative AdID="602678-Companion">
+		<Creative adId="602678-Companion">
 			<CompanionAds>
 				<Companion width="300" height="250">
 					<StaticResource creativeType="application/x-shockwave-flash">http://demo.tremormedia.com/proddev/vast/300x250_companion_1.swf</StaticResource>

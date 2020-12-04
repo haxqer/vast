@@ -5,7 +5,7 @@
     <AdSystem version="1.0">Acudeo Compatible</AdSystem>
     <AdTitle>VAST 2.0 Instream Test 1</AdTitle>
 	<Creatives>
-		<Creative AdID="601364">
+		<Creative adId="601364">
 			<Linear>
 				<Duration>undefined</Duration>
 				<MediaFiles>
