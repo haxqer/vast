@@ -7,6 +7,8 @@ import "encoding/xml"
 type VAST struct {
 	// The version of the VAST spec (should be either "2.0" or "3.0")
 	Version string `xml:"version,attr" json:",omitempty"`
+	// XML namespace. Most likely 'http://www.iab.com/VAST'
+	XMLNS string `xml:"xmlns,attr,omitempty" json:"xmlns,omitempty"`
 	// One or more Ad elements. Advertisers and video content publishers may
 	// associate an <Ad> element with a line item video ad defined in contract
 	// documentation, usually an insertion order. These line item ads typically
@@ -249,15 +251,15 @@ type Linear struct {
 	// Duration in standard time format, hh:mm:ss
 	Duration       Duration
 	AdParameters   *AdParameters `xml:",omitempty" json:",omitempty"`
-	Icons          *Icons `json:",omitempty"`
-	TrackingEvents []Tracking   `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
-	VideoClicks    *VideoClicks `xml:",omitempty" json:",omitempty"`
-	MediaFiles     []MediaFile  `xml:"MediaFiles>MediaFile,omitempty" json:",omitempty"`
+	Icons          *Icons        `json:",omitempty"`
+	TrackingEvents []Tracking    `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
+	VideoClicks    *VideoClicks  `xml:",omitempty" json:",omitempty"`
+	MediaFiles     []MediaFile   `xml:"MediaFiles>MediaFile,omitempty" json:",omitempty"`
 }
 
 // LinearWrapper defines a wrapped linear creative
 type LinearWrapper struct {
-	Icons          *Icons `json:",omitempty"`
+	Icons          *Icons       `json:",omitempty"`
 	TrackingEvents []Tracking   `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
 	VideoClicks    *VideoClicks `xml:",omitempty" json:",omitempty"`
 }
@@ -483,9 +485,9 @@ type AdParameters struct {
 
 // VideoClicks contains types of video clicks
 type VideoClicks struct {
-	ClickThroughs  []VideoClick `xml:"ClickThrough,omitempty" json:",omitempty"`
 	ClickTrackings []VideoClick `xml:"ClickTracking,omitempty" json:",omitempty"`
 	CustomClicks   []VideoClick `xml:"CustomClick,omitempty" json:",omitempty"`
+	ClickThroughs  []VideoClick `xml:"ClickThrough,omitempty" json:",omitempty"`
 }
 
 // VideoClick defines a click URL for a linear creative
