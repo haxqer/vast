@@ -7,13 +7,13 @@
     <Error>http://myErrorURL/wrapper/error</Error>
     <Impression>http://myTrackingURL/wrapper/impression</Impression>
 	<Creatives>
-		<Creative AdID="602867">
+		<Creative adId="602867">
 			<Linear>
 				<TrackingEvents>
 				</TrackingEvents>
 			</Linear>
 		</Creative>
-		<Creative AdID="602867-NonLinearTracking">
+		<Creative adId="602867-NonLinearTracking">
 			<NonLinearAds>
 				<TrackingEvents>
 					<Tracking event="creativeView">http://myTrackingURL/wrapper/nonlinear/creativeView/creativeView</Tracking>
