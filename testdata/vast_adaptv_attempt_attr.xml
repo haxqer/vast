@@ -101,11 +101,21 @@
 					</MediaFiles>
 
 					<Icons>
-						<Icon program="DAA" width="77" height="15" xPosition="right" yPosition="top" offset="00:00:00">
+						<Icon program="DAA" width="77" height="15" xPosition="right" yPosition="top" offset="00:00:00" altText="spekemat" hoverText="kick it!">
 							<StaticResource creativeType="image/png"><![CDATA[https://s.aolcdn.com/ads/adchoices.png]]></StaticResource>
 
 							<IconClicks>
 								<IconClickThrough><![CDATA[https://adinfo.aol.com]]></IconClickThrough>
+								<IconClickFallbackImages>
+									<IconClickFallbackImage width="69" height="69">
+										<AltText><![CDATA[https://myslaki.pl]]></AltText>
+										<StaticResource creativeType="image/png"><![CDATA[https://myslaki.pl/fallback_image.png]]></StaticResource>
+									</IconClickFallbackImage>
+                                    <IconClickFallbackImage width="71" height="71">
+                                        <AltText><![CDATA[https://slaki.pl]]></AltText>
+                                        <StaticResource creativeType="image/png"><![CDATA[https://slaki.pl/fallback_image.png]]></StaticResource>
+                                    </IconClickFallbackImage>
+								</IconClickFallbackImages>
 							</IconClicks>
 						</Icon>
 					</Icons>

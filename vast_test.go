@@ -21,7 +21,7 @@ func TestQuickStart(t *testing.T) {
 		Version: "3.0",
 		Ads: []Ad{
 			{
-				ID:   "123",
+				ID: "123",
 				InLine: &InLine{
 					AdSystem: &AdSystem{Name: "DSP"},
 					AdTitle:  CDATAString{CDATA: "adTitle"},
@@ -131,7 +131,7 @@ func createVastDemo() (*VAST, error) {
 		XMLNS:   "http://www.iab.com/VAST",
 		Ads: []Ad{
 			{
-				ID:   adId,
+				ID: adId,
 				InLine: &InLine{
 					AdSystem: &AdSystem{Name: "DSP"},
 					AdTitle:  CDATAString{CDATA: adTitle},
@@ -835,7 +835,6 @@ func TestIcons(t *testing.T) {
 			assert.Equal(t, "Adap.tv", inline.AdSystem.Name)
 			assert.Equal(t, "1.0", inline.AdSystem.Version)
 			assert.Equal(t, "Adap.tv Ad Unit", inline.AdTitle.CDATA)
-			//assert.Equal(t, "", inline.Description.CDATA)
 
 			if assert.Len(t, inline.Creatives, 1) {
 				crea1 := inline.Creatives[0]
@@ -847,6 +846,26 @@ func TestIcons(t *testing.T) {
 						assert.Equal(t, 15, icon1.Height)
 						assert.Equal(t, "right", icon1.XPosition)
 						assert.Equal(t, "top", icon1.YPosition)
+						assert.Equal(t, "spekemat", icon1.AltText)
+						assert.Equal(t, "kick it!", icon1.HoverText)
+
+						fallbackImages := icon1.IconClickFallbackImages
+						assert.Len(t, fallbackImages, 2)
+						assert.Equal(t, []IconClickFallbackImage{
+							{
+								Width: 69, Height: 69, AltText: "https://myslaki.pl",
+								StaticResource: &StaticResource{
+									CreativeType: "image/png", URI: "https://myslaki.pl/fallback_image.png",
+								},
+							},
+							{
+								Width: 71, Height: 71, AltText: "https://slaki.pl",
+								StaticResource: &StaticResource{
+									CreativeType: "image/png", URI: "https://slaki.pl/fallback_image.png",
+								},
+							},
+						}, fallbackImages)
+
 						if assert.NotNil(t, icon1.StaticResource) {
 							assert.Equal(t, "image/png", icon1.StaticResource.CreativeType)
 							assert.Equal(t, "https://s.aolcdn.com/ads/adchoices.png", icon1.StaticResource.URI)
@@ -874,8 +893,61 @@ func TestUniversalAdID(t *testing.T) {
 				if assert.Len(t, ad.InLine.Creatives, 1) {
 					if assert.NotNil(t, ad.InLine.Creatives[0].UniversalAdID) {
 						creative := ad.InLine.Creatives[0]
-						assert.Equal(t, "Ad-ID", creative.UniversalAdID.IDRegistry)
-						assert.Equal(t, "8465", creative.UniversalAdID.ID)
+						assert.Equal(t, "Ad-ID", creative.UniversalAdID[0].IDRegistry)
+						assert.Equal(t, "8465", creative.UniversalAdID[0].ID)
+					}
+				}
+			}
+		}
+	}
+}
+
+func TestClickThroughInWrapper(t *testing.T) {
+	v, _, _, err := loadFixture("testdata/vast4.2_click_through_in_wrapper.xml")
+	if !assert.NoError(t, err) {
+		return
+	}
+
+	assert.Equal(t, "4.0", v.Version)
+	if assert.Len(t, v.Ads, 1) {
+		ad := v.Ads[0]
+		assert.Equal(t, "20008", ad.ID)
+		if assert.NotNil(t, ad.InLine) {
+			if assert.NotNil(t, ad.InLine.Extensions) {
+				if assert.Len(t, ad.InLine.Creatives, 1) {
+					if assert.NotNil(t, ad.InLine.Creatives[0].UniversalAdID) {
+						creative := ad.InLine.Creatives[0]
+						assert.Equal(t, "Ad-ID", creative.UniversalAdID[0].IDRegistry)
+						assert.Equal(t, "8465", creative.UniversalAdID[0].ID)
+						assert.Equal(t, "Ad-2", creative.UniversalAdID[1].IDRegistry)
+						assert.Equal(t, "1111", creative.UniversalAdID[1].ID)
+					}
+				}
+			}
+		}
+		assert.Equal(t, "speka", ad.Wrapper.Creatives[0].Linear.VideoClicks.ClickThroughs[0].ID)
+	}
+}
+
+func TestMultipleUniversalAdIDs(t *testing.T) {
+	v, _, _, err := loadFixture("testdata/vast4.2_multiple_universal_ad_ids.xml")
+	if !assert.NoError(t, err) {
+		return
+	}
+
+	assert.Equal(t, "4.0", v.Version)
+	if assert.Len(t, v.Ads, 1) {
+		ad := v.Ads[0]
+		assert.Equal(t, "20008", ad.ID)
+		if assert.NotNil(t, ad.InLine) {
+			if assert.NotNil(t, ad.InLine.Extensions) {
+				if assert.Len(t, ad.InLine.Creatives, 1) {
+					if assert.NotNil(t, ad.InLine.Creatives[0].UniversalAdID) {
+						creative := ad.InLine.Creatives[0]
+						assert.Equal(t, "Ad-ID", creative.UniversalAdID[0].IDRegistry)
+						assert.Equal(t, "8465", creative.UniversalAdID[0].ID)
+						assert.Equal(t, "Ad-2", creative.UniversalAdID[1].IDRegistry)
+						assert.Equal(t, "1111", creative.UniversalAdID[1].ID)
 					}
 				}
 			}

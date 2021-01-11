@@ -26,14 +26,14 @@ type VAST struct {
 //
 // Each <Ad> contains a single <InLine> element or <Wrapper> element (but never both).
 type Ad struct {
-	InLine   *InLine  `xml:",omitempty" json:",omitempty"`
-	Wrapper  *Wrapper `xml:",omitempty" json:",omitempty"`
+	InLine  *InLine  `xml:",omitempty" json:",omitempty"`
+	Wrapper *Wrapper `xml:",omitempty" json:",omitempty"`
 	// An ad server-defined identifier string for the ad
 	ID string `xml:"id,attr,omitempty" json:",omitempty"`
 	// A number greater than zero (0) that identifies the sequence in which
 	// an ad should play; all <Ad> elements with sequence values are part of
 	// a pod and are intended to be played in sequence
-	Sequence int      `xml:"sequence,attr,omitempty" json:",omitempty"`
+	Sequence int `xml:"sequence,attr,omitempty" json:",omitempty"`
 	// An optional string that identifies the type of ad
 	// Possible values –video, audio, hybrid. Assumed to be video if attribute is not present
 	AdType string `xml:"adType,attr,omitempty" json:",omitempty"`
@@ -137,8 +137,8 @@ type Wrapper struct {
 	Impressions []Impression `xml:"Impression"`
 	// URL of ad tag of downstream Secondary Ad Server
 	// The container for one or more <Creative> elements
-	Creatives []CreativeWrapper `xml:"Creatives>Creative"`
-	VASTAdTagURI CDATAString
+	Creatives                []CreativeWrapper `xml:"Creatives>Creative"`
+	VASTAdTagURI             CDATAString
 	FallbackOnNoAd           *bool `xml:"fallbackOnNoAd,attr,omitempty" json:",omitempty"`
 	AllowMultipleAds         *bool `xml:"allowMultipleAds,attr,omitempty" json:",omitempty"`
 	FollowAdditionalWrappers *bool `xml:"followAdditionalWrappers,attr,omitempty" json:",omitempty"`
@@ -161,10 +161,10 @@ type Creative struct {
 	// The technology used for any included API
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
 	// If present, provides a VAST 4.x universal ad id
-	UniversalAdID *UniversalAdID `xml:"UniversalAdId,omitempty" json:",omitempty"`
+	UniversalAdID []UniversalAdID `xml:"UniversalAdId,omitempty" json:",omitempty"`
 	// If present, defines a linear creative
 	Linear *Linear `xml:",omitempty" json:",omitempty"`
-	// If defined, defins companions creatives
+	// If defined, defines companions creatives
 	CompanionAds *CompanionAds `xml:",omitempty" json:",omitempty"`
 	// If defined, defines non linear creatives
 	NonLinearAds *NonLinearAds `xml:",omitempty" json:",omitempty"`
@@ -245,14 +245,14 @@ type Linear struct {
 	// represents milliseconds and is optional. This skipoffset value
 	// indicates when the skip control should be provided after the creative
 	// begins playing.
-	SkipOffset *Offset `xml:"skipoffset,attr,omitempty" json:",omitempty"`
+	SkipOffset     *Offset       `xml:"skipoffset,attr,omitempty" json:",omitempty"`
 	Icons          *Icons        `json:",omitempty"`
 	TrackingEvents []Tracking    `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
 	AdParameters   *AdParameters `xml:",omitempty" json:",omitempty"`
 	// Duration in standard time format, hh:mm:ss
-	Duration       Duration		 `xml:"Duration,omitempty" json:",omitempty"`
-	MediaFiles     []MediaFile   `xml:"MediaFiles>MediaFile,omitempty" json:",omitempty"`
-	VideoClicks    *VideoClicks  `xml:",omitempty" json:",omitempty"`
+	Duration    Duration     `xml:"Duration,omitempty" json:",omitempty"`
+	MediaFiles  []MediaFile  `xml:"MediaFiles>MediaFile,omitempty" json:",omitempty"`
+	VideoClicks *VideoClicks `xml:",omitempty" json:",omitempty"`
 }
 
 // LinearWrapper defines a wrapped linear creative
@@ -429,6 +429,10 @@ type Icon struct {
 	Duration Duration `xml:"duration,attr"`
 	// The apiFramework defines the method to use for communication with the icon element
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
+	// Alternative text for the image. In an html5 image tag this should be the text for the alt attribute.
+	AltText string `xml:"altText,attr,omitempty"`
+	// Hover text for the image. In an html5 image tag this should be the text for the title attribute.
+	HoverText string `xml:"hoverText,attr,omitempty"`
 	// HTML to display the companion element
 	HTMLResource *HTMLResource `xml:",omitempty" json:",omitempty"`
 	// URL source for an IFrame to display the companion element
@@ -439,8 +443,23 @@ type Icon struct {
 	IconClickThrough *CDATAString `xml:"IconClicks>IconClickThrough,omitempty" json:",omitempty"`
 	// URLs to ping when user clicks on the the icon.
 	IconClickTrackings []CDATAString `xml:"IconClicks>IconClickTracking,omitempty" json:",omitempty"`
+	// Provides information disclosure for platforms which do not support HTML rendering, by baking
+	// the information into an image
+	IconClickFallbackImages []IconClickFallbackImage `xml:"IconClicks>IconClickFallbackImages>IconClickFallbackImage,omitempty" json:",omitempty"`
 	// A URI for the tracking resource file to be called when the icon creative is displayed.
 	IconViewTracking *CDATAString `xml:"IconViewTracking,omitempty" json:",omitempty"`
+}
+
+// IconClickFallbackImage element is used to display information when an icon click occurs
+type IconClickFallbackImage struct {
+	// Pixel width of the image asset.
+	Width int `xml:"width,attr"`
+	// Pixel height of the image asset.
+	Height int `xml:"height,attr"`
+	// Alt text to be displayed when fallback image is rendered in HTML environment.
+	AltText string `xml:",omitempty" json:",omitempty"`
+	// Image URL
+	StaticResource *StaticResource `xml:",omitempty" json:",omitempty"`
 }
 
 // Tracking defines an event tracking URL
@@ -547,11 +566,11 @@ type UniversalAdID struct {
 // CompanionClickTracking element is used to track the click
 type CompanionClickTracking struct {
 	// An id provided by the ad server to track the click in reports.
-	ID string  `xml:"id,attr,omitempty" json:",omitempty"`
+	ID string `xml:"id,attr,omitempty" json:",omitempty"`
 }
 
 // NonLinearClickTracking element is used to track the click
 type NonLinearClickTracking struct {
 	// An id provided by the ad server to track the click in reports
-	ID string  `xml:"id,attr,omitempty" json:",omitempty"`
+	ID string `xml:"id,attr,omitempty" json:",omitempty"`
 }
