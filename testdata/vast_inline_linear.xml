@@ -10,7 +10,7 @@
     <Impression>http://myTrackingURL/impression</Impression>
     <Impression id="foo">http://myTrackingURL/impression2</Impression>
 	<Creatives>
-		<Creative AdID="601364">
+		<Creative adId="601364">
 			<Linear>
 				<Duration>00:00:30</Duration>
 				<TrackingEvents>
@@ -30,7 +30,7 @@
 				</MediaFiles>
 			</Linear>
 		</Creative>
-		<Creative AdID="601364-Companion">
+		<Creative adId="601364-Companion">
 			<CompanionAds required="all">
 				<Companion width="300" height="250">
 					<StaticResource creativeType="image/jpeg">http://demo.tremormedia.com/proddev/vast/Blistex1.jpg</StaticResource>
