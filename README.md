@@ -1,5 +1,7 @@
 # Vast
 
+VAST 4.2 : https://github.com/haxqer/vast/tree/4.2
+
 XML/Json
 
 :star: VAST Ad generator and parser library on GoLang.
