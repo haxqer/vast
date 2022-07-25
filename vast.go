@@ -296,7 +296,7 @@ type Companion struct {
 	// URL to open as destination page when user clicks on the the companion banner ad.
 	CompanionClickThrough *CDATAString `xml:",omitempty" json:",omitempty"`
 	// URLs to ping when user clicks on the the companion banner ad.
-	CompanionClickTracking CompanionClickTracking `xml:",omitempty" json:",omitempty"`
+	CompanionClickTrackings []CompanionClickTracking `xml:"CompanionClickTracking,omitempty" json:",omitempty"`
 	// The creativeView should always be requested when present. For Companions
 	// creativeView is the only supported event.
 	TrackingEvents []Tracking `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
@@ -374,7 +374,7 @@ type NonLinear struct {
 	// URL to open as destination page when user clicks on the non-linear ad unit.
 	NonLinearClickThrough *CDATAString `xml:",omitempty" json:",omitempty"`
 	// URLs to ping when user clicks on the the non-linear ad.
-	NonLinearClickTracking NonLinearClickTracking `xml:",omitempty" json:",omitempty"`
+	NonLinearClickTrackings []NonLinearClickTracking `xml:"NonLinearClickTracking,omitempty" json:",omitempty"`
 }
 
 // NonLinearWrapper defines a non linear ad in a wrapper
@@ -547,11 +547,13 @@ type UniversalAdID struct {
 // CompanionClickTracking element is used to track the click
 type CompanionClickTracking struct {
 	// An id provided by the ad server to track the click in reports.
-	ID string  `xml:"id,attr,omitempty" json:",omitempty"`
+	ID  string `xml:"id,attr,omitempty" json:",omitempty"`
+	URI string `xml:",cdata"`
 }
 
 // NonLinearClickTracking element is used to track the click
 type NonLinearClickTracking struct {
 	// An id provided by the ad server to track the click in reports
-	ID string  `xml:"id,attr,omitempty" json:",omitempty"`
+	ID  string `xml:"id,attr,omitempty" json:",omitempty"`
+	URI string `xml:",cdata"`
 }
