@@ -159,7 +159,7 @@ type Wrapper struct {
 	AdSystem *AdSystem
 	// A URI representing an error-tracking pixel; this element can occur multiple
 	// times.
-	Errors []CDATAString `xml:",omitempty" json:",omitempty"`
+	Errors []CDATAString `xml:"Error,omitempty" json:"Error,omitempty"`
 	// XML node for custom extensions, as defined by the ad server. When used, a
 	// custom element should be nested under <Extensions> to help separate custom
 	// XML elements from VAST elements. The following example includes a custom
@@ -208,7 +208,7 @@ type Creative struct {
 	// The technology used for any included API
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
 	// If present, provides a VAST 4.x universal ad id
-	UniversalAdID *[]UniversalAdID `xml:",omitempty" json:",omitempty"`
+	UniversalAdID *[]UniversalAdID `xml:"UniversalAdId,omitempty" json:",omitempty"`
 	// If present, defines a linear creative
 	Linear *Linear `xml:",omitempty" json:",omitempty"`
 	// If defined, defins companions creatives
