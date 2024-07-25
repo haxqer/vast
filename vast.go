@@ -30,10 +30,20 @@ type Ad struct {
 	Wrapper *Wrapper `xml:",omitempty" json:",omitempty"`
 	// An ad server-defined identifier string for the ad
 	ID string `xml:"id,attr,omitempty" json:",omitempty"`
+
+	// An optional string that identifies the type of ad. This allows VAST to support audio ad scenarios.
+	// Possible values – video, audio, hybrid.
+	// Default value – video (assumed to be video if attribute is not present)
+	AdType string `xml:"adType,attr,omitempty" json:",omitempty"`
+
+	// Custom attr
+	Type string `xml:"type,attr,omitempty" json:",omitempty"`
+
 	// A number greater than zero (0) that identifies the sequence in which
 	// an ad should play; all <Ad> elements with sequence values are part of
 	// a pod and are intended to be played in sequence
 	Sequence int `xml:"sequence,attr,omitempty" json:",omitempty"`
+
 	// [Deprecated in VAST 4.1, along with apiFramework]
 	// A Boolean value that identifies a conditional ad.
 	// In the case of programmatic ad serving, a VPAID ad unit or other mechanism might be used to decide whether there is an ad that matches the placement.
@@ -42,9 +52,6 @@ type Ad struct {
 	// A value of true indicates that the ad is conditional and should be used in all cases where the InLine executable unit (such as VPAID) is not an ad but is instead a framework for finding an ad;
 	// a value of false is the default value and indicates that an ad is available.
 	ConditionalAd bool `xml:"conditionalAd,attr,omitempty" json:",omitempty"`
-	// An optional string that identifies the type of ad
-	// Possible values –video, audio, hybrid. Assumed to be video if attribute is not present
-	AdType string `xml:"adType,attr,omitempty" json:",omitempty"`
 }
 
 type CDATAString struct {
@@ -89,8 +96,9 @@ type InLine struct {
 	// competitors. Ad serving parties and publishers should identify how
 	// to interpret values provided within this element. As with any optional
 	// elements, the video player is not required to support it.
-	Advertiser string      `xml:",omitempty" json:",omitempty"`
-	Category   *[]Category `xml:",omitempty" json:",omitempty"`
+	Advertiser *Advertiser `xml:",omitempty" json:",omitempty"`
+
+	Category *[]Category `xml:",omitempty" json:",omitempty"`
 	// The container for one or more <Creative> elements
 	Creatives []Creative `xml:"Creatives>Creative"`
 	// A string value that provides a longer description of the ad.
@@ -101,20 +109,20 @@ type InLine struct {
 	// For example, the attribute might be set to type=”text/javascript”.
 	// Surveys can be dynamically inserted into the VAST response as long as
 	// cross-domain issues are avoided.
-	Survey *CDATAString `xml:",omitempty" json:",omitempty"`
+	Survey *Survey `xml:",omitempty" json:",omitempty"`
 	// The number of seconds in which the ad is valid for execution.
 	//In cases where the ad is requested ahead of time, this timing indicates how many seconds after the request that the ad expires and cannot be played.
 	//This element is useful for preventing an ad from playing after a timeout has occurred.
 	Expires *int `xml:"Expires,omitempty" json:"Expires,omitempty"`
 	// The ad server may provide URIs for tracking publisher-determined viewability,
-	//for both the InLine ad and any Wrappers, using the <ViewableImpression> element.
-	//Tracking URIs may be provided in three containers: <Viewable>, <NotViewable>, and <ViewUndetermined>.
-	ViewableImpression *ViewableImpression `xml:"ViewableImpression,omitempty" json:"ViewableImpression,omitempty"`
+	// for both the InLine ad and any Wrappers, using the <ViewableImpression> element.
+	// Tracking URIs may be provided in three containers: <Viewable>, <NotViewable>, and <ViewUndetermined>.
+	ViewableImpression *ViewableImpression `xml:",omitempty" json:",omitempty"`
 	// The <AdVerifications> element contains one or more <Verification> elements,
 	// which list the resources and metadata required to execute third-party measurement code in order to verify creative playback.
 	// The <AdVerifications> element is used to contain one or more <Verification> elements,
 	// which are used to initiate a controlled container where code can be executed for collecting data to verify ad playback details.
-	AdVerifications *[]Verification `xml:",omitempty" json:",omitempty"`
+	AdVerifications []Verification `xml:",omitempty" json:",omitempty"`
 }
 
 // Impression is a URI that directs the video player to a tracking resource file that
@@ -284,14 +292,14 @@ type Linear struct {
 	// represents milliseconds and is optional. This skipoffset value
 	// indicates when the skip control should be provided after the creative
 	// begins playing.
-	SkipOffset     *Offset       `xml:"skipoffset,attr,omitempty" json:",omitempty"`
+	SkipOffset *Offset `xml:"skipoffset,attr,omitempty" json:",omitempty"`
+	// Duration in standard time format, hh:mm:ss
+	Duration       Duration      `xml:"Duration,omitempty" json:",omitempty"`
 	Icons          *Icons        `json:",omitempty"`
 	TrackingEvents []Tracking    `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
 	AdParameters   *AdParameters `xml:",omitempty" json:",omitempty"`
-	// Duration in standard time format, hh:mm:ss
-	Duration    Duration     `xml:"Duration,omitempty" json:",omitempty"`
-	VideoClicks *VideoClicks `xml:",omitempty" json:",omitempty"`
-	MediaFiles  *MediaFiles
+	VideoClicks    *VideoClicks  `xml:",omitempty" json:",omitempty"`
+	MediaFiles     *MediaFiles
 }
 
 // <LinearWrapper> defines a wrapped linear creative

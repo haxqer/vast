@@ -120,7 +120,8 @@ func TestQuickStart(t *testing.T) {
 		Version: "3.0",
 		Ads: []Ad{
 			{
-				ID: "123",
+				ID:   "123",
+				Type: "front",
 				InLine: &InLine{
 					AdSystem: &AdSystem{Name: "DSP"},
 					AdTitle:  PlainString{CDATA: "adTitle"},
@@ -174,7 +175,7 @@ func TestQuickStart(t *testing.T) {
 		},
 	}
 
-	want := []byte(`{"Version":"3.0","Ad":[{"ID":"123","Type":"front","InLine":{"AdSystem":{"Data":"DSP"},"AdTitle":{"Data":"adTitle"},"Impressions":[{"ID":"11111","URI":"http://impressionv1.track.com"},{"ID":"11112","URI":"http://impressionv2.track.com"}],"Creatives":[{"ID":"987","Linear":{"SkipOffset":"00:00:05","Duration":"00:00:15","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"},{"Event":"firstQuartile","URI":"http://track.xxx.com/q/firstQuartile?xx"},{"Event":"midpoint","URI":"http://track.xxx.com/q/midpoint?xx"},{"Event":"thirdQuartile","URI":"http://track.xxx.com/q/thirdQuartile?xx"},{"Event":"complete","URI":"http://track.xxx.com/q/complete?xx"}],"MediaFiles":{"MediaFile":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4","Label":"123"}]}}}],"Extensions":[{"Type":"ClassName","Data":"AdsVideoView"},{"Type":"ExtURL","Data":"http://xxxxxxxx"}]}}],"Mute":true}`)
+	want := []byte(`{"Version":"3.0","Ad":[{"InLine":{"AdSystem":{"Data":"DSP"},"Extensions":[{"Type":"ClassName","Data":"AdsVideoView"},{"Type":"ExtURL","Data":"http://xxxxxxxx"}],"Impressions":[{"ID":"11111","URI":"http://impressionv1.track.com"},{"ID":"11112","URI":"http://impressionv2.track.com"}],"AdTitle":{"Data":"adTitle"},"Creatives":[{"ID":"987","Linear":{"SkipOffset":"00:00:05","Duration":"00:00:15","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"},{"Event":"firstQuartile","URI":"http://track.xxx.com/q/firstQuartile?xx"},{"Event":"midpoint","URI":"http://track.xxx.com/q/midpoint?xx"},{"Event":"thirdQuartile","URI":"http://track.xxx.com/q/thirdQuartile?xx"},{"Event":"complete","URI":"http://track.xxx.com/q/complete?xx"}],"MediaFiles":{"MediaFile":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4","Label":"123"}]}}}]},"ID":"123","Type":"front"}],"Mute":true}`)
 	got, err := json.Marshal(v)
 	t.Logf("%s", got)
 	if err != nil {
@@ -320,7 +321,7 @@ func TestCreateVastJson(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		{name: "testCase1", want: []byte(`{"Version":"3.0","Ad":[{"ID":"123","Type":"front","InLine":{"AdSystem":{"Data":"DSP"},"AdTitle":{"Data":"ad title"},"Impressions":[{"ID":"456","URI":"http://impression.track.cn"}],"Creatives":[{"ID":"123456","Linear":{"Duration":"00:00:15","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"}],"MediaFiles":{"MediaFile":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4","Label":"123"}]}}}]}}]}`),
+		{name: "testCase1", want: []byte(`{"Version":"3.0","xmlns":"http://www.iab.com/VAST","Ad":[{"InLine":{"AdSystem":{"Data":"DSP"},"Impressions":[{"ID":"456","URI":"http://impression.track.cn"}],"AdTitle":{"Data":"ad title"},"Creatives":[{"ID":"123456","Linear":{"Duration":"00:00:15","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"}],"MediaFiles":{"MediaFile":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4","Label":"123"}]}}}]},"ID":"123"}]}`),
 			wantErr: false},
 	}
 	for _, tt := range tests {
@@ -344,7 +345,7 @@ func TestCreateVastXML(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		{name: "testCase1", want: []byte(`<VAST version="3.0"><Ad id="123" type="front"><InLine><AdSystem>DSP</AdSystem><AdTitle>ad title</AdTitle><Impression id="456"><![CDATA[http://impression.track.cn]]></Impression><Creatives><Creative id="123456"><Linear><Duration>00:00:15</Duration><TrackingEvents><Tracking event="start"><![CDATA[http://track.xxx.com/q/start?xx]]></Tracking></TrackingEvents><MediaFiles><MediaFile delivery="progressive" type="video/mp4" width="1024" height="576" label="123"><![CDATA[http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4]]></MediaFile></MediaFiles></Linear></Creative></Creatives></InLine></Ad></VAST>`),
+		{name: "testCase1", want: []byte(`<VAST version="3.0" xmlns="http://www.iab.com/VAST"><Ad id="123"><InLine><AdSystem>DSP</AdSystem><Impression id="456"><![CDATA[http://impression.track.cn]]></Impression><AdTitle>ad title</AdTitle><Creatives><Creative id="123456"><Linear><Duration>00:00:15</Duration><TrackingEvents><Tracking event="start"><![CDATA[http://track.xxx.com/q/start?xx]]></Tracking></TrackingEvents><MediaFiles><MediaFile delivery="progressive" type="video/mp4" width="1024" height="576" label="123"><![CDATA[http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4]]></MediaFile></MediaFiles></Linear></Creative></Creatives></InLine></Ad></VAST>`),
 			wantErr: false},
 	}
 	for _, tt := range tests {
@@ -527,7 +528,7 @@ func TestInlineLinear(t *testing.T) {
 						}
 						assert.Len(t, linear.VideoClicks.CustomClicks, 0)
 					}
-					if assert.Len(t, linear.MediaFiles, 1) {
+					if assert.Len(t, *linear.MediaFiles.MediaFile, 1) {
 						mf := *linear.MediaFiles.MediaFile
 						assert.Equal(t, "progressive", mf[0].Delivery)
 						assert.Equal(t, "video/x-flv", mf[0].Type)
@@ -614,7 +615,7 @@ func TestInlineNonLinear(t *testing.T) {
 			assert.Equal(t, "Acudeo Compatible", inline.AdSystem.Name)
 			assert.Equal(t, "NonLinear Test Campaign 1", inline.AdTitle.CDATA)
 			assert.Equal(t, "NonLinear Test Campaign 1", inline.Description.CDATA)
-			assert.Equal(t, "http://mySurveyURL/survey", inline.Survey.CDATA)
+			assert.Equal(t, "http://mySurveyURL/survey", inline.Survey.URI)
 			if assert.Len(t, inline.Errors, 1) {
 				assert.Equal(t, "http://myErrorURL/error", inline.Errors[0].CDATA)
 			}
@@ -819,7 +820,7 @@ func TestSpotXVpaid(t *testing.T) {
 					defer adParam.Close()
 					b, _ := ioutil.ReadAll(adParam)
 					assert.Equal(t, linear.AdParameters.Parameters, string(b))
-					if assert.Len(t, crea1.Linear.MediaFiles, 1) {
+					if assert.Len(t, *crea1.Linear.MediaFiles.MediaFile, 1) {
 						media1 := *crea1.Linear.MediaFiles.MediaFile
 						assert.Equal(t, "progressive", media1[0].Delivery)
 						assert.Equal(t, "application/javascript", media1[0].Type)
@@ -909,7 +910,7 @@ func TestExtraSpacesVpaid(t *testing.T) {
 					linear := crea1.Linear
 
 					assert.Equal(t, "        \n                  <VAST></VAST>\n                  \n                  ", linear.AdParameters.Parameters)
-					if assert.Len(t, crea1.Linear.MediaFiles, 1) {
+					if assert.Len(t, *crea1.Linear.MediaFiles.MediaFile, 1) {
 						media1 := *crea1.Linear.MediaFiles.MediaFile
 						assert.Equal(t, "progressive", media1[0].Delivery)
 						assert.Equal(t, "application/javascript", media1[0].Type)
@@ -944,7 +945,7 @@ func TestIcons(t *testing.T) {
 			if assert.Len(t, inline.Creatives, 1) {
 				crea1 := inline.Creatives[0]
 				if assert.NotNil(t, crea1.Linear) {
-					if assert.Len(t, crea1.Linear.Icons.Icon, 1) {
+					if assert.Len(t, *crea1.Linear.Icons.Icon, 1) {
 						icon1 := *crea1.Linear.Icons.Icon
 						assert.Equal(t, "DAA", icon1[0].Program)
 						assert.Equal(t, 77, icon1[0].Width)
