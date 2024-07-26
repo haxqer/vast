@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"reflect"
@@ -11,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"aqwari.net/xml/xmltree"
 	"github.com/pquerna/ffjson/ffjson"
 	"github.com/stretchr/testify/assert"
 )
@@ -39,15 +41,15 @@ func TestQuickStartComplex(t *testing.T) {
 					Description: &CDATAString{"123"},
 					ViewableImpression: &ViewableImpression{
 						ID: "1234",
-						Viewable: &[]CDATAString{
+						Viewable: []CDATAString{
 							{CDATA: "http://viewable1.track.com"},
 							{CDATA: "http://viewable2.track.com"},
 						},
-						NotViewable: &[]CDATAString{
+						NotViewable: []CDATAString{
 							{CDATA: "http://notviewable1.track.com"},
 							{CDATA: "http://notviewable2.track.com"},
 						},
-						ViewUndetermined: &[]CDATAString{
+						ViewUndetermined: []CDATAString{
 							{CDATA: "http://viewundetermined1.track.com"},
 							{CDATA: "http://viewundetermined2.track.com"},
 						},
@@ -72,15 +74,16 @@ func TestQuickStartComplex(t *testing.T) {
 									Duration: &skip,
 								},
 								Duration: Duration(15 * time.Second),
-								TrackingEvents: []Tracking{
+								TrackingEvents: &TrackingEvents{Tracking: []Tracking{
 									{Event: EventTypeStart, URI: "http://track.xxx.com/q/start?xx"},
 									{Event: EventTypeFirstQuartile, URI: "http://track.xxx.com/q/firstQuartile?xx"},
 									{Event: EventTypeMidpoint, URI: "http://track.xxx.com/q/midpoint?xx"},
 									{Event: EventTypeThirdQuartile, URI: "http://track.xxx.com/q/thirdQuartile?xx"},
 									{Event: EventTypeComplete, URI: "http://track.xxx.com/q/complete?xx"},
 								},
+								},
 								MediaFiles: &MediaFiles{
-									MediaFile: &[]MediaFile{
+									MediaFile: []MediaFile{
 										{
 											Delivery: "progressive",
 											Type:     "video/mp4",
@@ -106,8 +109,7 @@ func TestQuickStartComplex(t *testing.T) {
 				},
 			},
 		},
-	} //vastXMLText, _ := xml.Marshal(v)
-	//fmt.Printf("%s", vastXMLText)
+	}
 
 	out, _ := xml.MarshalIndent(v, " ", "  ")
 	fmt.Println(string(out))
@@ -138,15 +140,16 @@ func TestQuickStart(t *testing.T) {
 									Duration: &d,
 								},
 								Duration: Duration(15 * time.Second),
-								TrackingEvents: []Tracking{
+								TrackingEvents: &TrackingEvents{Tracking: []Tracking{
 									{Event: EventTypeStart, URI: "http://track.xxx.com/q/start?xx"},
 									{Event: EventTypeFirstQuartile, URI: "http://track.xxx.com/q/firstQuartile?xx"},
 									{Event: EventTypeMidpoint, URI: "http://track.xxx.com/q/midpoint?xx"},
 									{Event: EventTypeThirdQuartile, URI: "http://track.xxx.com/q/thirdQuartile?xx"},
 									{Event: EventTypeComplete, URI: "http://track.xxx.com/q/complete?xx"},
 								},
+								},
 								MediaFiles: &MediaFiles{
-									MediaFile: &[]MediaFile{
+									MediaFile: []MediaFile{
 										{
 											Delivery: "progressive",
 											Type:     "video/mp4",
@@ -175,7 +178,7 @@ func TestQuickStart(t *testing.T) {
 		},
 	}
 
-	want := []byte(`{"Version":"3.0","Ad":[{"InLine":{"AdSystem":{"Data":"DSP"},"Extensions":[{"Type":"ClassName","Data":"AdsVideoView"},{"Type":"ExtURL","Data":"http://xxxxxxxx"}],"Impressions":[{"ID":"11111","URI":"http://impressionv1.track.com"},{"ID":"11112","URI":"http://impressionv2.track.com"}],"AdTitle":{"Data":"adTitle"},"Creatives":[{"ID":"987","Linear":{"SkipOffset":"00:00:05","Duration":"00:00:15","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"},{"Event":"firstQuartile","URI":"http://track.xxx.com/q/firstQuartile?xx"},{"Event":"midpoint","URI":"http://track.xxx.com/q/midpoint?xx"},{"Event":"thirdQuartile","URI":"http://track.xxx.com/q/thirdQuartile?xx"},{"Event":"complete","URI":"http://track.xxx.com/q/complete?xx"}],"MediaFiles":{"MediaFile":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4","Label":"123"}]}}}]},"ID":"123","Type":"front"}],"Mute":true}`)
+	want := []byte(`{"Version":"3.0","Ad":[{"InLine":{"AdSystem":{"Data":"DSP"},"Extensions":[{"Type":"ClassName","Data":"AdsVideoView"},{"Type":"ExtURL","Data":"http://xxxxxxxx"}],"Impressions":[{"ID":"11111","URI":"http://impressionv1.track.com"},{"ID":"11112","URI":"http://impressionv2.track.com"}],"AdTitle":{"Data":"adTitle"},"Creatives":[{"ID":"987","Linear":{"SkipOffset":"00:00:05","Duration":"00:00:15","TrackingEvents":{"Tracking":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"},{"Event":"firstQuartile","URI":"http://track.xxx.com/q/firstQuartile?xx"},{"Event":"midpoint","URI":"http://track.xxx.com/q/midpoint?xx"},{"Event":"thirdQuartile","URI":"http://track.xxx.com/q/thirdQuartile?xx"},{"Event":"complete","URI":"http://track.xxx.com/q/complete?xx"}]},"MediaFiles":{"MediaFile":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4","Label":"123"}]}}}]},"ID":"123","Type":"front"}],"Mute":true}`)
 	got, err := json.Marshal(v)
 	t.Logf("%s", got)
 	if err != nil {
@@ -247,7 +250,7 @@ func createVastDemo() (*VAST, error) {
 							Sequence: 0,
 							Linear: &Linear{
 								Duration: seconds,
-								TrackingEvents: []Tracking{
+								TrackingEvents: &TrackingEvents{Tracking: []Tracking{
 									{
 										Event:  EventTypeStart,
 										Offset: nil,
@@ -255,8 +258,9 @@ func createVastDemo() (*VAST, error) {
 										UA:     "",
 									},
 								},
+								},
 								MediaFiles: &MediaFiles{
-									MediaFile: &[]MediaFile{
+									MediaFile: []MediaFile{
 										{
 											Delivery: "progressive",
 											Type:     mediaType,
@@ -298,7 +302,7 @@ func BenchmarkVastMarshalXML(b *testing.B) {
 
 func BenchmarkVastMarshalJson(b *testing.B) {
 
-	want := []byte(`{"Version":"3.0","xmlns":"http://www.iab.com/VAST","Ad":[{"ID":"123","Type":"front","InLine":{"AdSystem":{"Data":"DSP"},"AdTitle":{"Data":"ad title"},"Impressions":[{"ID":"456","URI":"http://impression.track.cn"}],"Creatives":[{"ID":"123456","Linear":{"Duration":"00:00:15","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"}],"MediaFiles":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4"}]}}]}}]}`)
+	want := []byte(`{"Version":"3.0","xmlns":"http://www.iab.com/VAST","Ad":[{"ID":"123","Type":"front","InLine":{"AdSystem":{"Data":"DSP"},"AdTitle":{"Data":"ad title"},"Impressions":[{"ID":"456","URI":"http://impression.track.cn"}],"Creatives":[{"ID":"123456","Linear":{"Duration":"00:00:15"{"Tracking":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"}]},"MediaFiles":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4"}]}}]}}]}`)
 
 	b.ResetTimer()
 
@@ -321,7 +325,7 @@ func TestCreateVastJson(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		{name: "testCase1", want: []byte(`{"Version":"3.0","xmlns":"http://www.iab.com/VAST","Ad":[{"InLine":{"AdSystem":{"Data":"DSP"},"Impressions":[{"ID":"456","URI":"http://impression.track.cn"}],"AdTitle":{"Data":"ad title"},"Creatives":[{"ID":"123456","Linear":{"Duration":"00:00:15","TrackingEvents":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"}],"MediaFiles":{"MediaFile":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4","Label":"123"}]}}}]},"ID":"123"}]}`),
+		{name: "testCase1", want: []byte(`{"Version":"3.0","xmlns":"http://www.iab.com/VAST","Ad":[{"InLine":{"AdSystem":{"Data":"DSP"},"Impressions":[{"ID":"456","URI":"http://impression.track.cn"}],"AdTitle":{"Data":"ad title"},"Creatives":[{"ID":"123456","Linear":{"Duration":"00:00:15","TrackingEvents":{"Tracking":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"}]},"MediaFiles":{"MediaFile":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4","Label":"123"}]}}}]},"ID":"123"}]}`),
 			wantErr: false},
 	}
 	for _, tt := range tests {
@@ -362,25 +366,24 @@ func TestCreateVastXML(t *testing.T) {
 		})
 	}
 }
-
-func loadFixture(path string) (*VAST, string, string, error) {
+func loadFixture(path string) (*VAST, []byte, string, error) {
 	xmlFile, err := os.Open(path)
 	if err != nil {
-		return nil, "", "", err
+		return nil, nil, "", err
 	}
 	defer xmlFile.Close()
-	b, _ := ioutil.ReadAll(xmlFile)
+	b, _ := io.ReadAll(xmlFile)
 
 	var v VAST
 	err = xml.Unmarshal(b, &v)
 
 	res, err := xml.MarshalIndent(v, "", "  ")
 	if err != nil {
-		return nil, "", "", err
+		return nil, nil, "", err
 
 	}
 
-	return &v, string(b), string(res), err
+	return &v, b, string(res), err
 }
 
 func TestCreativeExtensions(t *testing.T) {
@@ -513,11 +516,11 @@ func TestInlineLinear(t *testing.T) {
 				if assert.NotNil(t, crea1.Linear) {
 					linear := crea1.Linear
 					assert.Equal(t, Duration(30*time.Second), linear.Duration)
-					if assert.Len(t, linear.TrackingEvents, 6) {
-						assert.Equal(t, linear.TrackingEvents[0].Event, "creativeView")
-						assert.Equal(t, linear.TrackingEvents[0].URI, "http://myTrackingURL/creativeView")
-						assert.Equal(t, linear.TrackingEvents[1].Event, "start")
-						assert.Equal(t, linear.TrackingEvents[1].URI, "http://myTrackingURL/start")
+					if assert.Len(t, linear.TrackingEvents.Tracking, 6) {
+						assert.Equal(t, linear.TrackingEvents.Tracking[0].Event, "creativeView")
+						assert.Equal(t, linear.TrackingEvents.Tracking[0].URI, "http://myTrackingURL/creativeView")
+						assert.Equal(t, linear.TrackingEvents.Tracking[1].Event, "start")
+						assert.Equal(t, linear.TrackingEvents.Tracking[1].URI, "http://myTrackingURL/start")
 					}
 					if assert.NotNil(t, linear.VideoClicks) {
 						if assert.Len(t, linear.VideoClicks.ClickThroughs, 1) {
@@ -528,8 +531,8 @@ func TestInlineLinear(t *testing.T) {
 						}
 						assert.Len(t, linear.VideoClicks.CustomClicks, 0)
 					}
-					if assert.Len(t, *linear.MediaFiles.MediaFile, 1) {
-						mf := *linear.MediaFiles.MediaFile
+					if assert.Len(t, linear.MediaFiles.MediaFile, 1) {
+						mf := linear.MediaFiles.MediaFile
 						assert.Equal(t, "progressive", mf[0].Delivery)
 						assert.Equal(t, "video/x-flv", mf[0].Type)
 						assert.Equal(t, 500, mf[0].Bitrate)
@@ -555,9 +558,9 @@ func TestInlineLinear(t *testing.T) {
 							assert.Equal(t, "image/jpeg", comp1.StaticResource.CreativeType)
 							assert.Equal(t, "http://demo.tremormedia.com/proddev/vast/Blistex1.jpg", comp1.StaticResource.URI)
 						}
-						if assert.Len(t, comp1.TrackingEvents, 1) {
-							assert.Equal(t, "creativeView", comp1.TrackingEvents[0].Event)
-							assert.Equal(t, "http://myTrackingURL/firstCompanionCreativeView", comp1.TrackingEvents[0].URI)
+						if assert.Len(t, comp1.TrackingEvents.Tracking, 1) {
+							assert.Equal(t, "creativeView", comp1.TrackingEvents.Tracking[0].Event)
+							assert.Equal(t, "http://myTrackingURL/firstCompanionCreativeView", comp1.TrackingEvents.Tracking[0].URI)
 						}
 						assert.Equal(t, "http://www.tremormedia.com", comp1.CompanionClickThrough.CDATA)
 
@@ -629,11 +632,11 @@ func TestInlineNonLinear(t *testing.T) {
 				assert.Nil(t, crea1.CompanionAds)
 				if assert.NotNil(t, crea1.NonLinearAds) {
 					nonlin := crea1.NonLinearAds
-					if assert.Len(t, nonlin.TrackingEvents, 5) {
-						assert.Equal(t, nonlin.TrackingEvents[0].Event, "creativeView")
-						assert.Equal(t, nonlin.TrackingEvents[0].URI, "http://myTrackingURL/nonlinear/creativeView")
-						assert.Equal(t, nonlin.TrackingEvents[1].Event, "expand")
-						assert.Equal(t, nonlin.TrackingEvents[1].URI, "http://myTrackingURL/nonlinear/expand")
+					if assert.Len(t, nonlin.TrackingEvents.Tracking, 5) {
+						assert.Equal(t, nonlin.TrackingEvents.Tracking[0].Event, "creativeView")
+						assert.Equal(t, nonlin.TrackingEvents.Tracking[0].URI, "http://myTrackingURL/nonlinear/creativeView")
+						assert.Equal(t, nonlin.TrackingEvents.Tracking[1].Event, "expand")
+						assert.Equal(t, nonlin.TrackingEvents.Tracking[1].URI, "http://myTrackingURL/nonlinear/expand")
 					}
 					if assert.Len(t, nonlin.NonLinears, 2) {
 						assert.Equal(t, "image/jpeg", nonlin.NonLinears[0].StaticResource.CreativeType)
@@ -666,9 +669,9 @@ func TestInlineNonLinear(t *testing.T) {
 							assert.Equal(t, "image/jpeg", comp2.StaticResource.CreativeType)
 							assert.Equal(t, "http://demo.tremormedia.com/proddev/vast/728x90_banner1.jpg", comp2.StaticResource.URI)
 						}
-						if assert.Len(t, comp2.TrackingEvents, 1) {
-							assert.Equal(t, "creativeView", comp2.TrackingEvents[0].Event)
-							assert.Equal(t, "http://myTrackingURL/secondCompanion", comp2.TrackingEvents[0].URI)
+						if assert.Len(t, comp2.TrackingEvents.Tracking, 1) {
+							assert.Equal(t, "creativeView", comp2.TrackingEvents.Tracking[0].Event)
+							assert.Equal(t, "http://myTrackingURL/secondCompanion", comp2.TrackingEvents.Tracking[0].URI)
 						}
 						assert.Equal(t, "http://www.tremormedia.com", comp2.CompanionClickThrough.CDATA)
 					}
@@ -711,11 +714,11 @@ func TestWrapperLinear(t *testing.T) {
 				assert.Nil(t, crea1.CompanionAds)
 				if assert.NotNil(t, crea1.Linear) {
 					linear := crea1.Linear
-					if assert.Len(t, linear.TrackingEvents, 11) {
-						assert.Equal(t, linear.TrackingEvents[0].Event, "creativeView")
-						assert.Equal(t, linear.TrackingEvents[0].URI, "http://myTrackingURL/wrapper/creativeView")
-						assert.Equal(t, linear.TrackingEvents[1].Event, "start")
-						assert.Equal(t, linear.TrackingEvents[1].URI, "http://myTrackingURL/wrapper/start")
+					if assert.Len(t, linear.TrackingEvents.Tracking, 11) {
+						assert.Equal(t, linear.TrackingEvents.Tracking[0].Event, "creativeView")
+						assert.Equal(t, linear.TrackingEvents.Tracking[0].URI, "http://myTrackingURL/wrapper/creativeView")
+						assert.Equal(t, linear.TrackingEvents.Tracking[1].Event, "start")
+						assert.Equal(t, linear.TrackingEvents.Tracking[1].URI, "http://myTrackingURL/wrapper/start")
 					}
 					assert.Nil(t, linear.VideoClicks)
 				}
@@ -735,9 +738,9 @@ func TestWrapperLinear(t *testing.T) {
 				assert.Nil(t, crea3.CompanionAds)
 				assert.Nil(t, crea3.Linear)
 				if assert.NotNil(t, crea3.NonLinearAds) {
-					if assert.Len(t, crea3.NonLinearAds.TrackingEvents, 1) {
-						assert.Equal(t, "creativeView", crea3.NonLinearAds.TrackingEvents[0].Event)
-						assert.Equal(t, "http://myTrackingURL/wrapper/creativeView", crea3.NonLinearAds.TrackingEvents[0].URI)
+					if assert.Len(t, crea3.NonLinearAds.TrackingEvents.Tracking, 1) {
+						assert.Equal(t, "creativeView", crea3.NonLinearAds.TrackingEvents.Tracking[0].Event)
+						assert.Equal(t, "http://myTrackingURL/wrapper/creativeView", crea3.NonLinearAds.TrackingEvents.Tracking[0].URI)
 					}
 				}
 			}
@@ -780,9 +783,9 @@ func TestWrapperNonLinear(t *testing.T) {
 				assert.Nil(t, crea2.CompanionAds)
 				assert.Nil(t, crea2.Linear)
 				if assert.NotNil(t, crea2.NonLinearAds) {
-					if assert.Len(t, crea2.NonLinearAds.TrackingEvents, 5) {
-						assert.Equal(t, "creativeView", crea2.NonLinearAds.TrackingEvents[0].Event)
-						assert.Equal(t, "http://myTrackingURL/wrapper/nonlinear/creativeView/creativeView", crea2.NonLinearAds.TrackingEvents[0].URI)
+					if assert.Len(t, crea2.NonLinearAds.TrackingEvents.Tracking, 5) {
+						assert.Equal(t, "creativeView", crea2.NonLinearAds.TrackingEvents.Tracking[0].Event)
+						assert.Equal(t, "http://myTrackingURL/wrapper/nonlinear/creativeView/creativeView", crea2.NonLinearAds.TrackingEvents.Tracking[0].URI)
 					}
 				}
 			}
@@ -820,8 +823,8 @@ func TestSpotXVpaid(t *testing.T) {
 					defer adParam.Close()
 					b, _ := ioutil.ReadAll(adParam)
 					assert.Equal(t, linear.AdParameters.Parameters, string(b))
-					if assert.Len(t, *crea1.Linear.MediaFiles.MediaFile, 1) {
-						media1 := *crea1.Linear.MediaFiles.MediaFile
+					if assert.Len(t, crea1.Linear.MediaFiles.MediaFile, 1) {
+						media1 := crea1.Linear.MediaFiles.MediaFile
 						assert.Equal(t, "progressive", media1[0].Delivery)
 						assert.Equal(t, "application/javascript", media1[0].Type)
 						assert.Equal(t, 300, media1[0].Width)
@@ -910,8 +913,8 @@ func TestExtraSpacesVpaid(t *testing.T) {
 					linear := crea1.Linear
 
 					assert.Equal(t, "        \n                  <VAST></VAST>\n                  \n                  ", linear.AdParameters.Parameters)
-					if assert.Len(t, *crea1.Linear.MediaFiles.MediaFile, 1) {
-						media1 := *crea1.Linear.MediaFiles.MediaFile
+					if assert.Len(t, crea1.Linear.MediaFiles.MediaFile, 1) {
+						media1 := crea1.Linear.MediaFiles.MediaFile
 						assert.Equal(t, "progressive", media1[0].Delivery)
 						assert.Equal(t, "application/javascript", media1[0].Type)
 						assert.Equal(t, 300, media1[0].Width)
@@ -986,5 +989,42 @@ func TestUniversalAdID(t *testing.T) {
 				}
 			}
 		}
+	}
+}
+
+func TestIABVASTSamples(t *testing.T) {
+	samples := []string{
+		"testdata/iab/vast_4.2_samples/Ad_Verification-test.xml",
+		"testdata/iab/vast_4.2_samples/Category-test.xml",
+		"testdata/iab/vast_4.2_samples/Closed_Caption_Test.xml",
+		"testdata/iab/vast_4.2_samples/Event_Tracking-test.xml",
+		"testdata/iab/vast_4.2_samples/IconClickFallbacks.xml",
+		"testdata/iab/vast_4.2_samples/Inline_Companion_Tag-test.xml",
+		"testdata/iab/vast_4.2_samples/Inline_Linear_Tag-test.xml",
+		"testdata/iab/vast_4.2_samples/Inline_Non-Linear_Tag-test.xml",
+		"testdata/iab/vast_4.2_samples/Inline_Simple.xml",
+		"testdata/iab/vast_4.2_samples/No_Wrapper_Tag-test.xml",
+		"testdata/iab/vast_4.2_samples/Ready_to_serve_Media_Files_check-test.xml",
+		"testdata/iab/vast_4.2_samples/Universal_Ad_ID-multi-test.xml",
+		"testdata/iab/vast_4.2_samples/Video_Clicks_and_click_tracking-Inline-test.xml",
+		"testdata/iab/vast_4.2_samples/Viewable_Impression-test.xml",
+		"testdata/iab/vast_4.2_samples/Wrapper_Tag-test.xml",
+	}
+	for _, sample := range samples {
+		t.Run(sample, func(t *testing.T) {
+			vast, xmlFile, _, err := loadFixture(sample)
+			assert.NoError(t, err)
+
+			expected, err := xmltree.Parse(xmlFile)
+			assert.NoError(t, err)
+
+			vastXML, err := xml.Marshal(vast)
+			assert.NoError(t, err)
+
+			actual, err := xmltree.Parse(vastXML)
+			assert.NoError(t, err)
+
+			assert.True(t, xmltree.Equal(actual, expected))
+		})
 	}
 }

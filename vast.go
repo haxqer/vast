@@ -122,7 +122,7 @@ type InLine struct {
 	// which list the resources and metadata required to execute third-party measurement code in order to verify creative playback.
 	// The <AdVerifications> element is used to contain one or more <Verification> elements,
 	// which are used to initiate a controlled container where code can be executed for collecting data to verify ad playback details.
-	AdVerifications []Verification `xml:",omitempty" json:",omitempty"`
+	AdVerifications *AdVerifications `xml:"AdVerifications,omitempty" json:",omitempty"`
 }
 
 // Impression is a URI that directs the video player to a tracking resource file that
@@ -164,7 +164,7 @@ type Wrapper struct {
 	// custom element should be nested under <Extensions> to help separate custom
 	// XML elements from VAST elements. The following example includes a custom
 	// xml element within the Extensions element.
-	Extensions []Extension `xml:"Extensions>Extension,omitempty" json:",omitempty"`
+	Extensions *[]Extension `xml:"Extensions>Extension,omitempty" json:",omitempty"`
 	// One or more URIs that directs the video player to a tracking resource file that the
 	// video player should request when the first frame of the ad is displayed
 	Impressions []Impression `xml:"Impression"`
@@ -184,7 +184,7 @@ type Wrapper struct {
 	// which list the resources and metadata required to execute third-party measurement code in order to verify creative playback.
 	// The <AdVerifications> element is used to contain one or more <Verification> elements,
 	// which are used to initiate a controlled container where code can be executed for collecting data to verify ad playback details.
-	AdVerifications []Verification `xml:",omitempty" json:",omitempty"`
+	AdVerifications *AdVerifications `xml:"AdVerifications,omitempty" json:",omitempty"`
 
 	FallbackOnNoAd           *bool `xml:"fallbackOnNoAd,attr,omitempty" json:",omitempty"`
 	AllowMultipleAds         *bool `xml:"allowMultipleAds,attr,omitempty" json:",omitempty"`
@@ -240,7 +240,7 @@ type CompanionAds struct {
 
 // NonLinearAds contains non linear creatives
 type NonLinearAds struct {
-	TrackingEvents []Tracking `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
+	TrackingEvents *TrackingEvents `xml:"TrackingEvents,omitempty" json:",omitempty"`
 	// Non linear creatives
 	NonLinears []NonLinear `xml:"NonLinear,omitempty" json:",omitempty"`
 }
@@ -256,23 +256,14 @@ type CreativeWrapper struct {
 	// If present, defines a linear creative
 	Linear *LinearWrapper `xml:",omitempty" json:",omitempty"`
 	// If defined, defines companions creatives
-	CompanionAds *CompanionAdsWrapper `xml:"CompanionAds,omitempty" json:",omitempty"`
+	CompanionAds *CompanionAds `xml:"CompanionAds,omitempty" json:",omitempty"`
 	// If defined, defines non linear creatives
 	NonLinearAds *NonLinearAdsWrapper `xml:"NonLinearAds,omitempty" json:",omitempty"`
 }
 
-// <CompanionAdsWrapper> contains companions creatives in a wrapper
-type CompanionAdsWrapper struct {
-	// Provides information about which companion creative to display.
-	// All means that the player must attempt to display all. Any means the player
-	// must attempt to play at least one. None means all companions are optional
-	Required   string             `xml:"required,attr,omitempty" json:",omitempty"`
-	Companions []CompanionWrapper `xml:"Companion,omitempty" json:",omitempty"`
-}
-
 // <NonLinearAdsWrapper> contains non linear creatives in a wrapper
 type NonLinearAdsWrapper struct {
-	TrackingEvents []Tracking `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
+	TrackingEvents *TrackingEvents `xml:"TrackingEvents,omitempty" json:",omitempty"`
 	// Non linear creatives
 	NonLinears []NonLinearWrapper `xml:"NonLinear,omitempty" json:",omitempty"`
 }
@@ -294,19 +285,19 @@ type Linear struct {
 	// begins playing.
 	SkipOffset *Offset `xml:"skipoffset,attr,omitempty" json:",omitempty"`
 	// Duration in standard time format, hh:mm:ss
-	Duration       Duration      `xml:"Duration,omitempty" json:",omitempty"`
-	Icons          *Icons        `json:",omitempty"`
-	TrackingEvents []Tracking    `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
-	AdParameters   *AdParameters `xml:",omitempty" json:",omitempty"`
-	VideoClicks    *VideoClicks  `xml:",omitempty" json:",omitempty"`
-	MediaFiles     *MediaFiles
+	Duration       Duration        `xml:"Duration,omitempty" json:",omitempty"`
+	Icons          *Icons          `json:",omitempty"`
+	TrackingEvents *TrackingEvents `xml:"TrackingEvents,omitempty" json:",omitempty"`
+	AdParameters   *AdParameters   `xml:",omitempty" json:",omitempty"`
+	VideoClicks    *VideoClicks    `xml:",omitempty" json:",omitempty"`
+	MediaFiles     *MediaFiles     `xml:"MediaFiles" json:",omitempty"`
 }
 
 // <LinearWrapper> defines a wrapped linear creative
 type LinearWrapper struct {
-	Icons          *Icons       `json:",omitempty"`
-	TrackingEvents []Tracking   `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
-	VideoClicks    *VideoClicks `xml:",omitempty" json:",omitempty"`
+	Icons          *Icons          `json:",omitempty"`
+	TrackingEvents *TrackingEvents `xml:"TrackingEvents,omitempty" json:",omitempty"`
+	VideoClicks    *VideoClicks    `xml:",omitempty" json:",omitempty"`
 }
 
 // <Companion> defines a companion ad
@@ -314,70 +305,30 @@ type Companion struct {
 	// Optional identifier
 	ID string `xml:"id,attr,omitempty" json:",omitempty"`
 	// Pixel dimensions of companion slot.
-	Width int `xml:"width,attr,omitempty" json:",omitempty"`
+	Width int `xml:"width,attr,omitempty"`
 	// Pixel dimensions of companion slot.
-	Height int `xml:"height,attr,omitempty" json:",omitempty"`
+	Height int `xml:"height,attr,omitempty"`
 	// Pixel dimensions of the companion asset.
-	AssetWidth int `xml:"assetWidth,attr,omitempty" json:",omitempty"`
+	AssetWidth int `xml:"assetWidth,attr,omitempty"`
 	// Pixel dimensions of the companion asset.
-	AssetHeight int `xml:"assetHeight,attr,omitempty" json:",omitempty"`
+	AssetHeight int `xml:"assetHeight,attr,omitempty"`
 	// Pixel dimensions of expanding companion ad when in expanded state.
-	ExpandedWidth int `xml:"expandedWidth,attr,omitempty" json:",omitempty"`
+	ExpandedWidth int `xml:"expandedWidth,attr,omitempty"`
 	// Pixel dimensions of expanding companion ad when in expanded state.
-	ExpandedHeight int `xml:"expandedHeight,attr,omitempty" json:",omitempty"`
+	ExpandedHeight int `xml:"expandedHeight,attr,omitempty"`
 	// The apiFramework defines the method to use for communication with the companion.
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
 	// Used to match companion creative to publisher placement areas on the page.
 	AdSlotID string `xml:"adSlotId,attr,omitempty" json:",omitempty"`
-	// HTML to display the companion element
-	HTMLResource *HTMLResource `xml:",omitempty" json:",omitempty"`
-	// URL source for an IFrame to display the companion element
-	IFrameResource *CDATAString `xml:",omitempty" json:",omitempty"`
-	// URL to a static file, such as an image or SWF file
-	StaticResource *StaticResource `xml:",omitempty" json:",omitempty"`
-	// Data to be passed into the companion ads. The apiFramework defines the method
-	// to use for communication (e.g. “FlashVar”)
-	AdParameters *AdParameters `xml:",omitempty" json:",omitempty"`
-	// Alt text to be displayed when companion is rendered in HTML environment.
-	AltText string `xml:",omitempty" json:",omitempty"`
 	// URL to open as destination page when user clicks on the the companion banner ad.
 	CompanionClickThrough *CDATAString `xml:",omitempty" json:",omitempty"`
 	// URLs to ping when user clicks on the the companion banner ad.
 	CompanionClickTrackings []CompanionClickTracking `xml:"CompanionClickTracking,omitempty" json:",omitempty"`
-	// The creativeView should always be requested when present. For Companions
-	// creativeView is the only supported event.
-	TrackingEvents []Tracking `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
-}
-
-// <CompanionWrapper> defines a companion ad in a wrapper
-type CompanionWrapper struct {
-	// Optional identifier
-	ID string `xml:"id,attr,omitempty" json:",omitempty"`
-	// Pixel dimensions of companion slot.
-	Width int `xml:"width,attr"`
-	// Pixel dimensions of companion slot.
-	Height int `xml:"height,attr"`
-	// Pixel dimensions of the companion asset.
-	AssetWidth int `xml:"assetWidth,attr"`
-	// Pixel dimensions of the companion asset.
-	AssetHeight int `xml:"assetHeight,attr"`
-	// Pixel dimensions of expanding companion ad when in expanded state.
-	ExpandedWidth int `xml:"expandedWidth,attr"`
-	// Pixel dimensions of expanding companion ad when in expanded state.
-	ExpandedHeight int `xml:"expandedHeight,attr"`
-	// The apiFramework defines the method to use for communication with the companion.
-	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
-	// Used to match companion creative to publisher placement areas on the page.
-	AdSlotID string `xml:"adSlotId,attr,omitempty" json:",omitempty"`
-	// URL to open as destination page when user clicks on the the companion banner ad.
-	CompanionClickThrough *CDATAString `xml:",omitempty" json:",omitempty"`
-	// URLs to ping when user clicks on the the companion banner ad.
-	CompanionClickTracking []CDATAString `xml:",omitempty" json:",omitempty"`
 	// Alt text to be displayed when companion is rendered in HTML environment.
 	AltText string `xml:",omitempty" json:",omitempty"`
 	// The creativeView should always be requested when present. For Companions
 	// creativeView is the only supported event.
-	TrackingEvents []Tracking `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
+	TrackingEvents *TrackingEvents `xml:"TrackingEvents,omitempty" json:",omitempty"`
 	// Data to be passed into the companion ads. The apiFramework defines the method
 	// to use for communication (e.g. “FlashVar”)
 	AdParameters *AdParameters `xml:",omitempty" json:",omitempty"`
@@ -386,7 +337,9 @@ type CompanionWrapper struct {
 	// URL source for an IFrame to display the companion element
 	IFrameResource *CDATAString `xml:",omitempty" json:",omitempty"`
 	// HTML to display the companion element
-	HTMLResource *HTMLResource `xml:",omitempty" json:",omitempty"`
+	HTMLResource  *HTMLResource `xml:",omitempty" json:",omitempty"`
+	Pxratio       string        `xml:"pxratio,attr,omitempty" json:",omitempty"`
+	RenderingMode string        `xml:"renderingMode,attr,omitempty" json:",omitempty"`
 }
 
 // <NonLinear> defines a non linear ad
@@ -394,13 +347,13 @@ type NonLinear struct {
 	// Optional identifier
 	ID string `xml:"id,attr,omitempty" json:",omitempty"`
 	// Pixel dimensions of companion.
-	Width int `xml:"width,attr"`
+	Width int `xml:"width,attr,omitempty"`
 	// Pixel dimensions of companion.
-	Height int `xml:"height,attr"`
+	Height int `xml:"height,attr,omitempty"`
 	// Pixel dimensions of expanding nonlinear ad when in expanded state.
-	ExpandedWidth int `xml:"expandedWidth,attr"`
+	ExpandedWidth int `xml:"expandedWidth,attr,omitempty"`
 	// Pixel dimensions of expanding nonlinear ad when in expanded state.
-	ExpandedHeight int `xml:"expandedHeight,attr"`
+	ExpandedHeight int `xml:"expandedHeight,attr,omitempty"`
 	// Whether it is acceptable to scale the image.
 	Scalable bool `xml:"scalable,attr,omitempty" json:",omitempty"`
 	// Whether the ad must have its aspect ratio maintained when scales.
@@ -429,13 +382,13 @@ type NonLinearWrapper struct {
 	// Optional identifier
 	ID string `xml:"id,attr,omitempty" json:",omitempty"`
 	// Pixel dimensions of companion.
-	Width int `xml:"width,attr"`
+	Width int `xml:"width,attr,omitempty"`
 	// Pixel dimensions of companion.
-	Height int `xml:"height,attr"`
+	Height int `xml:"height,attr,omitempty"`
 	// Pixel dimensions of expanding nonlinear ad when in expanded state.
-	ExpandedWidth int `xml:"expandedWidth,attr"`
+	ExpandedWidth int `xml:"expandedWidth,attr,omitempty"`
 	// Pixel dimensions of expanding nonlinear ad when in expanded state.
-	ExpandedHeight int `xml:"expandedHeight,attr"`
+	ExpandedHeight int `xml:"expandedHeight,attr,omitempty"`
 	// Whether it is acceptable to scale the image.
 	Scalable bool `xml:"scalable,attr,omitempty" json:",omitempty"`
 	// Whether the ad must have its aspect ratio maintained when scales.
@@ -446,7 +399,7 @@ type NonLinearWrapper struct {
 	// The apiFramework defines the method to use for communication with the nonlinear element.
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
 	// The creativeView should always be requested when present.
-	TrackingEvents []Tracking `xml:"TrackingEvents>Tracking,omitempty" json:",omitempty"`
+	TrackingEvents *TrackingEvents `xml:"TrackingEvents,omitempty" json:",omitempty"`
 	// URLs to ping when user clicks on the the non-linear ad.
 	NonLinearClickTracking []CDATAString `xml:",omitempty" json:",omitempty"`
 }
@@ -459,21 +412,21 @@ type Icons struct {
 // <Icon> represents advertising industry initiatives like AdChoices.
 type Icon struct {
 	// Identifies the industry initiative that the icon supports.
-	Program string `xml:"program,attr"`
+	Program string `xml:"program,attr,omitempty"`
 	// Pixel dimensions of icon.
-	Width int `xml:"width,attr"`
+	Width int `xml:"width,attr,omitempty"`
 	// Pixel dimensions of icon.
-	Height int `xml:"height,attr"`
+	Height int `xml:"height,attr,omitempty"`
 	// The horizontal alignment location (in pixels) or a specific alignment.
 	// Must match ([0-9]*|left|right)
-	XPosition string `xml:"xPosition,attr"`
+	XPosition string `xml:"xPosition,attr,omitempty"`
 	// The vertical alignment location (in pixels) or a specific alignment.
 	// Must match ([0-9]*|top|bottom)
-	YPosition string `xml:"yPosition,attr"`
+	YPosition string `xml:"yPosition,attr,omitempty"`
 	// Start time at which the player should display the icon. Expressed in standard time format hh:mm:ss.
-	Offset Offset `xml:"offset,attr"`
+	Offset Offset `xml:"offset,attr,omitempty"`
 	// duration for which the player must display the icon. Expressed in standard time format hh:mm:ss.
-	Duration Duration `xml:"duration,attr"`
+	Duration Duration `xml:"duration,attr,omitempty"`
 	// The apiFramework defines the method to use for communication with the icon element
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
 	// The pixel ratio for which the icon creative is intended.
@@ -494,7 +447,8 @@ type Icon struct {
 	// URL to open as destination page when user clicks on the icon.
 	IconClickThrough *CDATAString `xml:"IconClicks>IconClickThrough,omitempty" json:",omitempty"`
 	// URLs to ping when user clicks on the the icon.
-	IconClickTracking []CDATAString `xml:"IconClicks>IconClickTracking,omitempty" json:",omitempty"`
+	IconClickTracking       []CDATAString            `xml:"IconClicks>IconClickTracking,omitempty" json:",omitempty"`
+	IconClickFallbackImages *IconClickFallbackImages `xml:"IconClicks>IconClickFallbackImages,omitempty" json:",omitempty"`
 	// URL to a static file, such as an image or SWF file
 	StaticResource *StaticResource `xml:",omitempty" json:",omitempty"`
 	// URL source for an IFrame to display the companion element
@@ -519,6 +473,10 @@ type Tracking struct {
 
 	// custom attr
 	UA string `xml:"ua,attr,omitempty" json:",omitempty"`
+}
+
+type TrackingEvents struct {
+	Tracking []Tracking `xml:"Tracking,omitempty"`
 }
 
 // <StaticResource> is the URL to a static file, such as an image or SWF file
@@ -567,25 +525,25 @@ type MediaFile struct {
 	// Video. Image ads or interactive ads can be included in the
 	// MediaFiles section with appropriate Mime types
 	Type string `xml:"type,attr"`
-	// The codec used to produce the media file.
-	Codec string `xml:"codec,attr,omitempty" json:",omitempty"`
 	// Bitrate of encoded video in Kbps. If bitrate is supplied, MinBitrate
 	// and MaxBitrate should not be supplied.
 	Bitrate int `xml:"bitrate,attr,omitempty" json:",omitempty"`
+	// Pixel dimensions of video.
+	Width int `xml:"width,attr"`
+	// Pixel dimensions of video.
+	Height int `xml:"height,attr"`
 	// Minimum bitrate of an adaptive stream in Kbps. If MinBitrate is supplied,
 	// MaxBitrate must be supplied and Bitrate should not be supplied.
 	MinBitrate int `xml:"minBitrate,attr,omitempty" json:",omitempty"`
 	// Maximum bitrate of an adaptive stream in Kbps. If MaxBitrate is supplied,
 	// MinBitrate must be supplied and Bitrate should not be supplied.
 	MaxBitrate int `xml:"maxBitrate,attr,omitempty" json:",omitempty"`
-	// Pixel dimensions of video.
-	Width int `xml:"width,attr"`
-	// Pixel dimensions of video.
-	Height int `xml:"height,attr"`
 	// Whether it is acceptable to scale the image.
 	Scalable bool `xml:"scalable,attr,omitempty" json:",omitempty"`
 	// Whether the ad must have its aspect ratio maintained when scales.
 	MaintainAspectRatio bool `xml:"maintainAspectRatio,attr,omitempty" json:",omitempty"`
+	// The codec used to produce the media file.
+	Codec string `xml:"codec,attr,omitempty" json:",omitempty"`
 	// The APIFramework defines the method to use for communication if the MediaFile
 	// is interactive. Suggested values for this element are “VPAID”, “FlashVars”
 	// (for Flash/Flex), “initParams” (for Silverlight) and “GetVariables” (variables
@@ -637,8 +595,8 @@ type Survey struct {
 }
 
 type MediaFiles struct {
-	MediaFile               *[]MediaFile
-	Mezzanine               *[]Mezzanine               `xml:",omitempty" json:",omitempty"`
-	InteractiveCreativeFile *[]InteractiveCreativeFile `xml:",omitempty" json:",omitempty"`
-	ClosedCaptionFiles      *[]ClosedCaptionFile       `xml:"ClosedCaptionFiles>ClosedCaptionFile,omitempty" json:",omitempty"`
+	MediaFile               []MediaFile               `xml:",omitempty" json:",omitempty"`
+	Mezzanine               []Mezzanine               `xml:",omitempty" json:",omitempty"`
+	InteractiveCreativeFile []InteractiveCreativeFile `xml:",omitempty" json:",omitempty"`
+	ClosedCaptionFiles      *[]ClosedCaptionFile      `xml:"ClosedCaptionFiles>ClosedCaptionFile,omitempty" json:",omitempty"`
 }

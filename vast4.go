@@ -8,26 +8,26 @@ type ViewableImpression struct {
 	ID string `xml:"id,attr"`
 	// The <Viewable> element is used to place a URI that the player triggers if and when
 	// the ad meets criteria for a viewable video ad impression.
-	Viewable *[]CDATAString `xml:"Viewable"`
+	Viewable []CDATAString `xml:"Viewable,omitempty"`
 	// The <NotViewable> element is a container for placing a URI that the player triggers
 	// if the ad is executed but never meets criteria for a viewable video ad impression.
-	NotViewable *[]CDATAString `xml:"NotViewable"`
+	NotViewable []CDATAString `xml:"NotViewable,omitempty"`
 	// The <ViewUndetermined> element is a container for placing a URI that the player triggers
 	// if it cannot determine whether the ad has met criteria for a viewable video ad impression.
-	ViewUndetermined *[]CDATAString `xml:"ViewUndetermined"`
+	ViewUndetermined []CDATAString `xml:"ViewUndetermined,omitempty"`
 }
 
 // Providing an advertiser name can help publishers prevent display of the ad with its competitors.
 type Advertiser struct {
 	// An (optional) identifier for the advertiser, provided by the ad server. Can be used for internal analytics.
-	ID string `xml:"id,attr"`
+	ID string `xml:"id,attr,omitempty"`
 	// A string that provides the name of the advertiser as defined by the ad serving party.
 	// Recommend using the domain of the advertiser.
 	Advertiser string `xml:",chardata"`
 }
 
 type AdVerifications struct {
-	Verification *Verification `xml:",omitempty"`
+	Verification []Verification `xml:",omitempty"`
 }
 
 // The <Verification> element contains the executable and bootstrapping data required to run the measurement code for a single verification vendor.
@@ -37,16 +37,16 @@ type AdVerifications struct {
 type Verification struct {
 	// An identifier for the verification vendor. The recommended format is [domain]- [useCase],
 	// to avoid name collisions. For example, "company.com-omid".
-	Vendor string `xml:"vendor,attr"`
+	Vendor string `xml:"vendor,attr,omitempty"`
 	// A container for the URI to the JavaScript file used to collect verification data.
 	// Some verification vendors may provide JavaScript executables which work in non-browser environments,
 	// for example, in an iOS app enabled by JavaScriptCore. These resources only require methods of the API framework,
 	// without relying on any browser built-in functionality.
-	JavaScriptResource []JavaScriptResource
+	JavaScriptResource []JavaScriptResource `xml:"JavaScriptResource,omitempty"`
 	// A reference to a non-JavaScript or custom-integration resource intended for collecting verification data via the listed apiFramework.
-	ExecutableResource []ExecutableResource
+	ExecutableResource []ExecutableResource `xml:"ExecutableResource,omitempty"`
 	// The verification vendor may provide URIs for tracking events relating to the execution of their code during the ad session.
-	TrackingEvents []Tracking `xml:"TrackingEvents>Tracking,omitempty"`
+	TrackingEvents *TrackingEvents `xml:"TrackingEvents,omitempty"`
 	// <VerificationParameters> contains a CDATA-wrapped string intended for bootstrapping the verification code and providing metadata about the current impression.
 	// The format of the string is up to the individual vendor and should be passed along verbatim.
 	VerificationParameters string `xml:",omitempty"`
@@ -57,10 +57,10 @@ type Verification struct {
 // A container for the URI to the JavaScript file used to collect verification data.
 type JavaScriptResource struct {
 	// Identifies the API needed to execute the resource file if applicable.
-	ApiFramework string `xml:"apiFramework,attr"`
+	ApiFramework string `xml:"apiFramework,attr,omitempty"`
 	// If "true", this resource is optimized and able to execute in
 	// an environment without DOM and other browser built-ins (e.g. iOS' JavaScriptCore).
-	BrowserOptional bool `xml:"browserOptional,attr"`
+	BrowserOptional bool `xml:"browserOptional,attr,omitempty"`
 	// A CDATA-wrapped URI to a file providing Closed Caption info for the media file.
 	URI string `xml:",cdata"`
 }
@@ -112,13 +112,29 @@ type InteractiveCreativeFile struct {
 	URI string `xml:",cdata"`
 }
 
+type ClosedCaptionFiles struct {
+	ClosedCaptionFile []ClosedCaptionFile `xml:"ClosedCaptionFile,omitempty" json:",omitempty"`
+}
+
 type ClosedCaptionFile struct {
 	// Identifies the MIME type of the file provided.
-	Type bool `xml:"type,attr,omitempty"`
+	Type string `xml:"type,attr,omitempty"`
 	// Language of the Closed Caption File using ISO 631-1 codes.
 	// An optional locale suffix can also be provided.
 	// Examples - “en”, “en-US”, “zh-TW”,
-	Language bool `xml:"language,attr,omitempty"`
+	Language string `xml:"language,attr,omitempty"`
 	// A CDATA-wrapped URI to a file providing Closed Caption info for the media file.
 	URI string `xml:",cdata"`
+}
+
+type IconClickFallbackImages struct {
+	// Use to display information when an IconClick occurs
+	IconClickFallbackImage []IconClickFallbackImage `xml:"IconClickFallbackImage"`
+}
+
+type IconClickFallbackImage struct {
+	AltText        string       `xml:"AltText,omitempty"`
+	StaticResource *CDATAString `xml:"StaticResource,omitempty"`
+	Height         int          `xml:"height,attr,omitempty"`
+	Width          int          `xml:"width,attr,omitempty"`
 }
