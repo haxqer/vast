@@ -163,7 +163,7 @@ type Wrapper struct {
 	Impressions []Impression `xml:"Impression"`
 	// A URI representing an error-tracking pixel; this element can occur multiple
 	// times.
-	Errors []CDATAString `xml:",omitempty" json:",omitempty"`
+	Errors []CDATAString `xml:"Error,omitempty" json:"Error,omitempty"`
 	// The container for one or more <Creative> elements
 	Creatives []CreativeWrapper `xml:"Creatives>Creative"`
 	// XML node for custom extensions, as defined by the ad server. When used, a
