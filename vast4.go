@@ -49,9 +49,14 @@ type Verification struct {
 	TrackingEvents *TrackingEvents `xml:"TrackingEvents,omitempty"`
 	// <VerificationParameters> contains a CDATA-wrapped string intended for bootstrapping the verification code and providing metadata about the current impression.
 	// The format of the string is up to the individual vendor and should be passed along verbatim.
-	VerificationParameters string `xml:",omitempty"`
+	VerificationParameters *VerificationParameters `xml:",omitempty"`
 	// ad categories are used in creative separation and for compliance in certain programs
 	BlockedAdCategories []Category `xml:",omitempty"`
+}
+
+type VerificationParameters struct {
+	// CDATA-wrapped metadata string for the verification executable
+	URI string `xml:",cdata"`
 }
 
 // A container for the URI to the JavaScript file used to collect verification data.
@@ -96,6 +101,8 @@ type Mezzanine struct {
 	// Type of media file (2D / 3D / 360 / etc). Optional.
 	// Default value = 2D
 	MediaType string `xml:"mediaType,attr,omitempty" json:",omitempty"`
+	// A CDATA-wrapped URI to a raw, high-quality media file
+	URI string `xml:",cdata"`
 }
 
 type InteractiveCreativeFile struct {
