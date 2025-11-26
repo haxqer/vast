@@ -77,3 +77,25 @@ func TestExtensionGeneric(t *testing.T) {
 	// assert the resulting marshaled extension
 	assert.Equal(t, string(extensionData), string(xmlExtensionOutput))
 }
+
+func TestViaplayFreeWheel_AdInlineExtensions(t *testing.T) {
+	v, _, _, err := loadFixture("testdata/viaplay-freewheel-vast-example.xml")
+	assert.NoError(t, err)
+
+	assert.Equal(t, "4.1", v.Version)
+	assert.Len(t, v.Ads, 1)
+	ad := v.Ads[0]
+	assert.NotNil(t, ad.InLine)
+	assert.NotNil(t, ad.InLine.Extensions)
+	exts := *ad.InLine.Extensions
+	assert.Len(t, exts, 1)
+	ext := exts[0]
+	assert.Equal(t, "FreeWheel", ext.Type)
+	assert.NotNil(t, ext.SSAICreativeID)
+	assert.Equal(t, "252235610", ext.SSAICreativeID.CreativeID)
+	assert.Equal(t, "252235610", ext.SSAICreativeID.Data)
+	assert.Len(t, ext.Parameters, 1)
+	param := ext.Parameters[0]
+	assert.Equal(t, "_fw_4AID", param.Name)
+	assert.Equal(t, "2JTVZJTWRA4G", param.Value)
+}

@@ -1,0 +1,41 @@
+<VAST version='4.1' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xsi:noNamespaceSchemaLocation='vast.xsd'>
+    <Ad id='88329660.140278195686144' sequence='1'>
+        <InLine>
+            <AdSystem>FreeWheel</AdSystem>
+            <AdTitle>Streaming TV Women | Bref uge 47-51 | 15s v47-50 | Streaming TV Female |
+                Viaplay</AdTitle>
+            <Error><![CDATA[https://5d402.v.fwmrm.net/ad/l/1?s=l2cfa&n=381954%3B381954&t=1763993881074247393&f=201588736&r=381954&adid=88329660&reid=968130850&arid=0&async=0&iw=&uxnw=&uxss=&uxct=&et=e&cn=[ERRORCODE]]]></Error>
+            <Impression id='FWi_88329660.0'><![CDATA[https://5d402.v.fwmrm.net/ad/l/1?s=l2cfa&n=381954%3B381954&t=1763993881074247393&f=201588736&r=381954&adid=88329660&reid=968130850&arid=0&auid=&cn=defaultImpression&et=i&_cc=88329660,968130850,,,1763993881,1&tpos=0&async=0&iw=&uxnw=&uxss=&uxct=&metr=1031&init=1&asid=436412621&ssid=23714252&pingids=5514&cr=https%3A//ad.doubleclick.net/ddm/trackimp/N703922.4568425VIAPLAYGROUP/B34629858.433061131%3Bdc_trk_aid%3D626450920%3Bdc_trk_cid%3D244422904%3Bord%3D1580703259]]></Impression>
+            <Impression id='FWi_88329660.0.1'><![CDATA[https://visitanalytics.userreport.com/hit?t=APLfw-45*DK%2F381954%2Fwaoo-dk%2Fssai%2FHD_tv_3_puls_dk&event=impression&pb_name=381954&d=&ip=104.151.104.22&gdpr=1&gdpr_consent=]]></Impression>
+            <Impression id='FWi_88329660.0.2'><![CDATA[https://user-sync.fwmrm.net/ad/u?mode=auto-user-sync&_fw_gdpr=1&_fw_gdpr_consent=]]></Impression>
+            <Creatives>
+                <Creative AdID='88329660' id='252235610'>
+                    <UniversalAdId idRegistry='unknown'>252235610</UniversalAdId>
+                    <Linear>
+                        <Duration>00:00:15</Duration>
+                        <TrackingEvents>
+                            <Tracking event='complete'><![CDATA[https://5d402.v.fwmrm.net/ad/l/1?s=l2cfa&n=381954%3B381954&t=1763993881074247393&f=201588736&r=381954&adid=88329660&reid=968130850&arid=0&auid=&cn=complete&et=i&_cc=&tpos=0&async=0&init=1&iw=&uxnw=&uxss=&uxct=&metr=1031]]></Tracking>
+                            <Tracking event='firstQuartile'><![CDATA[https://5d402.v.fwmrm.net/ad/l/1?s=l2cfa&n=381954%3B381954&t=1763993881074247393&f=201588736&r=381954&adid=88329660&reid=968130850&arid=0&auid=&cn=firstQuartile&et=i&_cc=&tpos=0&async=0&init=1&iw=&uxnw=&uxss=&uxct=&metr=1031]]></Tracking>
+                            <Tracking event='midpoint'><![CDATA[https://5d402.v.fwmrm.net/ad/l/1?s=l2cfa&n=381954%3B381954&t=1763993881074247393&f=201588736&r=381954&adid=88329660&reid=968130850&arid=0&auid=&cn=midPoint&et=i&_cc=&tpos=0&async=0&init=1&iw=&uxnw=&uxss=&uxct=&metr=1031]]></Tracking>
+                            <Tracking event='thirdQuartile'><![CDATA[https://5d402.v.fwmrm.net/ad/l/1?s=l2cfa&n=381954%3B381954&t=1763993881074247393&f=201588736&r=381954&adid=88329660&reid=968130850&arid=0&auid=&cn=thirdQuartile&et=i&_cc=&tpos=0&async=0&init=1&iw=&uxnw=&uxss=&uxct=&metr=1031]]></Tracking>
+                        </TrackingEvents>
+                        <VideoClicks>
+                            <ClickTracking id='FWc_88329660.0'><![CDATA[https://5d402.v.fwmrm.net/ad/l/1?s=l2cfa&n=381954%3B381954&t=1763993881074247393&f=201588736&r=381954&adid=88329660&reid=968130850&arid=0&auid=&cn=defaultClick&et=c&_cc=&tpos=0&async=0&cr=]]></ClickTracking>
+                        </VideoClicks>
+                        <MediaFiles>
+                            <MediaFile bitrate='12146' delivery='progressive' height='1080'
+                                id='968130850' type='video/mp4' width='1920'><![CDATA[https://freewheel-mtgx-tv.akamaized.net/m/1/381954/a/2JTVZJTWRA4G_202507161600359142/2JTVZJTWRA4G_1920.mp4]]></MediaFile>
+                        </MediaFiles>
+                    </Linear>
+                </Creative>
+            </Creatives>
+            <Extensions>
+                <Extension type='FreeWheel'>
+                    <SSAICreativeId creativeId='252235610'><![CDATA[252235610]]></SSAICreativeId>
+                    <Parameter name='_fw_4AID'><![CDATA[2JTVZJTWRA4G]]></Parameter>
+                </Extension>
+            </Extensions>
+        </InLine>
+    </Ad>
+</VAST>

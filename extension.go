@@ -2,12 +2,24 @@ package vast
 
 import "encoding/xml"
 
+type SSAICreativeID struct {
+	CreativeID string `xml:"creativeId,attr,omitempty" json:"creativeId,omitempty"`
+	Data       string `xml:",cdata" json:"data,omitempty"`
+}
+
+type ExtensionParameter struct {
+	Name  string `xml:"name,attr,omitempty" json:"name,omitempty"`
+	Value string `xml:",cdata" json:"value,omitempty"`
+}
+
 // Extension represent arbitrary XML provided by the platform to extend the
 // VAST response or by custom trackers.
 type Extension struct {
-	Type           string     `xml:"type,attr,omitempty"`
-	CustomTracking []Tracking `xml:"CustomTracking>Tracking,omitempty"  json:",omitempty"`
-	Data           string     `xml:",innerxml" json:",omitempty"`
+	Type           string               `xml:"type,attr,omitempty"`
+	CustomTracking []Tracking           `xml:"CustomTracking>Tracking,omitempty"  json:",omitempty"`
+	SSAICreativeID *SSAICreativeID      `xml:"SSAICreativeId,omitempty"  json:"ssaiCreativeId,omitempty"`
+	Parameters     []ExtensionParameter `xml:"Parameter,omitempty"  json:"parameters,omitempty"`
+	Data           string               `xml:",innerxml" json:",omitempty"`
 }
 
 // the extension type as a middleware in the encoding process.
@@ -45,6 +57,8 @@ func (e *Extension) UnmarshalXML(dec *xml.Decoder, start xml.StartElement) error
 	// copy the type and the customTracking
 	e.Type = e2.Type
 	e.CustomTracking = e2.CustomTracking
+	e.SSAICreativeID = e2.SSAICreativeID
+	e.Parameters = e2.Parameters
 	// copy the data only of customTracking is empty
 	if len(e.CustomTracking) == 0 {
 		e.Data = e2.Data
