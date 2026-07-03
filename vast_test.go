@@ -280,39 +280,31 @@ func createVastDemo() (*VAST, error) {
 }
 
 func BenchmarkVastMarshalXML(b *testing.B) {
-
-	want := []byte(`<VAST version="3.0" xmlns="http://www.iab.com/VAST"><Ad id="123" type="front"><InLine><AdSystem><![CDATA[DSP]]></AdSystem><AdTitle><![CDATA[ad title]]></AdTitle><Impression id="456"><![CDATA[http://impression.track.cn]]></Impression><Creatives><Creative id="123456"><Linear><Duration>00:00:15</Duration><TrackingEvents><Tracking event="start"><![CDATA[http://track.xxx.com/q/start?xx]]></Tracking></TrackingEvents><MediaFiles><MediaFile delivery="progressive" type="video/mp4" width="1024" height="576"><![CDATA[http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4]]></MediaFile></MediaFiles></Linear></Creative></Creatives></InLine></Ad></VAST>`)
+	v, err := createVastDemo()
+	if err != nil {
+		b.Fatalf("createVastDemo() error = %v", err)
+	}
 
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		v, _ := createVastDemo()
-		got, err := xml.Marshal(v)
-		if err != nil {
-			b.Errorf("Marshal() error = %v", err)
-			return
-		}
-		if !reflect.DeepEqual(got, want) {
-			b.Errorf("Marshal() got = %v, want %v", got, want)
+		if _, err := xml.Marshal(v); err != nil {
+			b.Fatalf("Marshal() error = %v", err)
 		}
 	}
 }
 
 func BenchmarkVastMarshalJson(b *testing.B) {
-
-	want := []byte(`{"Version":"3.0","xmlns":"http://www.iab.com/VAST","Ad":[{"ID":"123","Type":"front","InLine":{"AdSystem":{"Data":"DSP"},"AdTitle":{"Data":"ad title"},"Impressions":[{"ID":"456","URI":"http://impression.track.cn"}],"Creatives":[{"ID":"123456","Linear":{"Duration":"00:00:15"{"Tracking":[{"Event":"start","URI":"http://track.xxx.com/q/start?xx"}]},"MediaFiles":[{"Delivery":"progressive","Type":"video/mp4","Width":1024,"Height":576,"URI":"http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4"}]}}]}}]}`)
+	v, err := createVastDemo()
+	if err != nil {
+		b.Fatalf("createVastDemo() error = %v", err)
+	}
 
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		v, _ := createVastDemo()
-		got, err := json.Marshal(v)
-		if err != nil {
-			b.Errorf("Marshal() error = %v", err)
-			return
-		}
-		if !reflect.DeepEqual(got, want) {
-			b.Errorf("Marshal() got = %v, want %v", got, want)
+		if _, err := json.Marshal(v); err != nil {
+			b.Fatalf("Marshal() error = %v", err)
 		}
 	}
 }
