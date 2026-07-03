@@ -146,8 +146,10 @@ type IconClickFallbackImages struct {
 }
 
 type IconClickFallbackImage struct {
-	AltText        string       `xml:"AltText,omitempty"`
-	StaticResource *CDATAString `xml:"StaticResource,omitempty"`
-	Height         int          `xml:"height,attr,omitempty"`
-	Width          int          `xml:"width,attr,omitempty"`
+	AltText string `xml:"AltText,omitempty"`
+	// A URL to a static file, such as an image. A <StaticResource> carries a
+	// creativeType (MIME type) attribute per the VAST spec (section 3.15.1).
+	StaticResource *StaticResource `xml:"StaticResource,omitempty"`
+	Height         int             `xml:"height,attr,omitempty"`
+	Width          int             `xml:"width,attr,omitempty"`
 }

@@ -191,6 +191,10 @@ type Wrapper struct {
 	// The <AdVerifications> element is used to contain one or more <Verification> elements,
 	// which are used to initiate a controlled container where code can be executed for collecting data to verify ad playback details.
 	AdVerifications *AdVerifications `xml:"AdVerifications,omitempty" json:",omitempty"`
+	// ad categories used in creative separation and for compliance in certain
+	// programs. In VAST 4.x <BlockedAdCategories> is a direct child of the
+	// <Wrapper> element (spec section 3.19.2).
+	BlockedAdCategories []Category `xml:"BlockedAdCategories,omitempty" json:",omitempty"`
 
 	FallbackOnNoAd           *bool `xml:"fallbackOnNoAd,attr,omitempty" json:",omitempty"`
 	AllowMultipleAds         *bool `xml:"allowMultipleAds,attr,omitempty" json:",omitempty"`
@@ -304,6 +308,9 @@ type LinearWrapper struct {
 	Icons          *Icons          `json:",omitempty"`
 	TrackingEvents *TrackingEvents `xml:"TrackingEvents,omitempty" json:",omitempty"`
 	VideoClicks    *VideoClicks    `xml:",omitempty" json:",omitempty"`
+	// In the Wrapper branch of the VAST 4.3 schema (section 5, section 3.9.3)
+	// an <InteractiveCreativeFile> may be provided directly under <Linear>.
+	InteractiveCreativeFile []InteractiveCreativeFile `xml:"InteractiveCreativeFile,omitempty" json:",omitempty"`
 }
 
 // <Companion> defines a companion ad
@@ -453,7 +460,7 @@ type Icon struct {
 	// URL to open as destination page when user clicks on the icon.
 	IconClickThrough *CDATAString `xml:"IconClicks>IconClickThrough,omitempty" json:",omitempty"`
 	// URLs to ping when user clicks on the the icon.
-	IconClickTracking       []CDATAString            `xml:"IconClicks>IconClickTracking,omitempty" json:",omitempty"`
+	IconClickTracking       []IconClickTracking      `xml:"IconClicks>IconClickTracking,omitempty" json:",omitempty"`
 	IconClickFallbackImages *IconClickFallbackImages `xml:"IconClicks>IconClickFallbackImages,omitempty" json:",omitempty"`
 	// URL to a static file, such as an image or SWF file
 	StaticResource *StaticResource `xml:",omitempty" json:",omitempty"`
@@ -570,6 +577,13 @@ type MediaFile struct {
 type UniversalAdID struct {
 	IDRegistry string `xml:"idRegistry,attr"`
 	ID         string `xml:",chardata"`
+}
+
+// IconClickTracking is used to track click activity within an icon.
+type IconClickTracking struct {
+	// An id for the click to be measured.
+	ID  string `xml:"id,attr,omitempty" json:",omitempty"`
+	URI string `xml:",cdata"`
 }
 
 // CompanionClickTracking element is used to track the click
