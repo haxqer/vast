@@ -106,6 +106,13 @@ const (
 	EventTypeInteractiveStart = "interactiveStart"
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// Verification events (fired from within a <Verification> element's TrackingEvents)
+
+	// The player triggers this event when the verification resource(s) provided in the
+	// <Verification> element were executed. Used in the VAST 4.x separated-file model.
+	EventTypeVerificationNotExecuted = "verificationNotExecuted"
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Other
 
 	EventTypeView    = "view"

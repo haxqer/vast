@@ -1,4 +1,10 @@
-// Package vast implements IAB VAST 4.2 https://iabtechlab.com/wp-content/uploads/2019/06/VAST_4.2_final_june26.pdf
+// Package vast implements the IAB VAST (Video Ad Serving Template) specification
+// for generating and parsing VAST XML/JSON documents.
+//
+// The struct model targets VAST 4.3 (the latest version, released 2022 by the
+// IAB Tech Lab) and is backwards compatible with VAST 2.0, 3.0, 4.0, 4.1 and 4.2.
+//
+// Spec: https://github.com/InteractiveAdvertisingBureau/VAST4.x/blob/main/4.3.md
 package vast
 
 import "encoding/xml"

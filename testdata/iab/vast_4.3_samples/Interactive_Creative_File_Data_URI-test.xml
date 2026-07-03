@@ -1,0 +1,35 @@
+<VAST version="4.3">
+  <Ad id="20001" adType="video">
+    <InLine>
+      <AdSystem version="4.3">iabtechlab</AdSystem>
+      <Impression id="Impression-ID"><![CDATA[https://example.com/track/impression]]></Impression>
+      <AdServingId>a532d16d-4d7f-4440-bd29-2ec0e693fc80</AdServingId>
+      <AdTitle>VAST 4.3 Interactive Creative Data URI Example</AdTitle>
+      <Creatives>
+        <Creative id="5480" sequence="1" adId="2447226">
+          <UniversalAdId idRegistry="Ad-ID">8465</UniversalAdId>
+          <Linear>
+            <Duration>00:00:16</Duration>
+            <TrackingEvents>
+              <Tracking event="start"><![CDATA[https://example.com/track/start]]></Tracking>
+              <Tracking event="complete"><![CDATA[https://example.com/track/complete]]></Tracking>
+            </TrackingEvents>
+            <MediaFiles>
+              <MediaFile id="5241" delivery="progressive" type="video/mp4" bitrate="2000" width="1280" height="720"><![CDATA[https://example.com/media/high.mp4]]></MediaFile>
+              <InteractiveCreativeFile apiFramework="SIMID" type="text/html" variableDuration="true"><![CDATA[data:text/html,%3Chtml%3E%3Cbody%3EInteractive%3C%2Fbody%3E%3C%2Fhtml%3E]]></InteractiveCreativeFile>
+            </MediaFiles>
+          </Linear>
+        </Creative>
+      </Creatives>
+      <AdVerifications>
+        <Verification vendor="company.com-omid">
+          <JavaScriptResource apiFramework="omid" browserOptional="true"><![CDATA[https://verificationcompany1.com/verification_script1.js]]></JavaScriptResource>
+          <ExecutableResource apiFramework="omid" type="no-op"><![CDATA[https://verificationcompany1.com/executable_resource]]></ExecutableResource>
+          <TrackingEvents>
+            <Tracking event="verificationNotExecuted"><![CDATA[https://verificationcompany1.com/tracking/verificationNotExecuted]]></Tracking>
+          </TrackingEvents>
+        </Verification>
+      </AdVerifications>
+    </InLine>
+  </Ad>
+</VAST>

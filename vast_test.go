@@ -1026,3 +1026,60 @@ func TestIABVASTSamples(t *testing.T) {
 		})
 	}
 }
+
+// TestVAST43 exercises the elements that VAST 4.3 changed relative to 4.2:
+//   - <InteractiveCreativeFile> may carry an inline data URI, with a string `type`
+//     (MIME type) attribute.
+//   - <ExecutableResource> exposes a string `type` attribute.
+//
+// It also verifies round-trip (XML -> struct -> XML) fidelity of a 4.3 document.
+func TestVAST43(t *testing.T) {
+	const sample = "testdata/iab/vast_4.3_samples/Interactive_Creative_File_Data_URI-test.xml"
+
+	vast, xmlFile, _, err := loadFixture(sample)
+	if !assert.NoError(t, err) {
+		return
+	}
+
+	assert.Equal(t, "4.3", vast.Version)
+	if !assert.Len(t, vast.Ads, 1) {
+		return
+	}
+	inline := vast.Ads[0].InLine
+	if !assert.NotNil(t, inline) {
+		return
+	}
+
+	// InteractiveCreativeFile: inline data URI + string type attribute (VAST 4.3).
+	if assert.Len(t, inline.Creatives, 1) && assert.NotNil(t, inline.Creatives[0].Linear) {
+		mf := inline.Creatives[0].Linear.MediaFiles
+		if assert.NotNil(t, mf) && assert.Len(t, mf.InteractiveCreativeFile, 1) {
+			icf := mf.InteractiveCreativeFile[0]
+			assert.Equal(t, "SIMID", icf.ApiFramework)
+			assert.Equal(t, "text/html", icf.Type)
+			assert.True(t, icf.VariableDuration)
+			assert.True(t, strings.HasPrefix(icf.URI, "data:text/html,"), "expected inline data URI, got %q", icf.URI)
+		}
+	}
+
+	// ExecutableResource: string type attribute.
+	if assert.NotNil(t, inline.AdVerifications) && assert.Len(t, inline.AdVerifications.Verification, 1) {
+		ver := inline.AdVerifications.Verification[0]
+		if assert.Len(t, ver.ExecutableResource, 1) {
+			assert.Equal(t, "omid", ver.ExecutableResource[0].ApiFramework)
+			assert.Equal(t, "no-op", ver.ExecutableResource[0].Type)
+		}
+		if assert.NotNil(t, ver.TrackingEvents) && assert.Len(t, ver.TrackingEvents.Tracking, 1) {
+			assert.Equal(t, EventTypeVerificationNotExecuted, ver.TrackingEvents.Tracking[0].Event)
+		}
+	}
+
+	// Round-trip fidelity: re-marshalled XML must be equivalent to the source.
+	expected, err := xmltree.Parse(xmlFile)
+	assert.NoError(t, err)
+	vastXML, err := xml.Marshal(vast)
+	assert.NoError(t, err)
+	actual, err := xmltree.Parse(vastXML)
+	assert.NoError(t, err)
+	assert.True(t, xmltree.Equal(actual, expected))
+}

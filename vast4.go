@@ -71,11 +71,15 @@ type JavaScriptResource struct {
 }
 
 type ExecutableResource struct {
-	// Identifies the API needed to execute the resource file if applicable.
+	// The name of the API framework used to execute the AdVerification code.
 	ApiFramework string `xml:"apiFramework,attr,omitempty"`
-	// Identifies the MIME type of the file provided.
-	Type bool `xml:"type,attr,omitempty"`
-	// A CDATA-wrapped URI to a file providing Closed Caption info for the media file.
+	// The type of executable resource provided. The exact value used should be agreed
+	// upon by verification integrators and vendors who are implementing verification
+	// in a custom environment.
+	Type string `xml:"type,attr,omitempty" json:",omitempty"`
+	// A CDATA-wrapped reference to the resource. This may be a URI, but depending on the
+	// execution environment can be any value which enables the player to load the
+	// required verification code.
 	URI string `xml:",cdata"`
 }
 
@@ -109,13 +113,15 @@ type InteractiveCreativeFile struct {
 	// Identifies the API needed to execute the resource file if applicable.
 	ApiFramework string `xml:"apiFramework,attr,omitempty"`
 	// Identifies the MIME type of the file provided.
-	Type bool `xml:"type,attr,omitempty"`
+	Type string `xml:"type,attr,omitempty" json:",omitempty"`
 	// Useful for interactive use cases.
 	// Identifies whether the ad always drops when the duration is reached,
 	// or if it can potentially extend the duration by pausing the underlying video or delaying the adStopped call after adVideoComplete.
 	// If it set to true the extension of the duration should be user-initiated (typically by engaging with an interactive element to view additional content).
 	VariableDuration bool `xml:"variableDuration,attr,omitempty"`
-	// A CDATA-wrapped URI to a file providing Closed Caption info for the media file.
+	// A CDATA-wrapped URI to a file providing creative functions for the media file.
+	// As of VAST 4.3 this may be a direct URL or an inline data URI (e.g. to embed a
+	// small HTML payload directly instead of a URL for retrieving the file).
 	URI string `xml:",cdata"`
 }
 
