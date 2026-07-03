@@ -5,7 +5,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"reflect"
 	"strings"
@@ -13,7 +12,6 @@ import (
 	"time"
 
 	"aqwari.net/xml/xmltree"
-	"github.com/pquerna/ffjson/ffjson"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -308,7 +306,7 @@ func BenchmarkVastMarshalJson(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		v, _ := createVastDemo()
-		got, err := ffjson.Marshal(v)
+		got, err := json.Marshal(v)
 		if err != nil {
 			b.Errorf("Marshal() error = %v", err)
 			return
@@ -331,7 +329,7 @@ func TestCreateVastJson(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			v, _ := createVastDemo()
-			got, err := ffjson.Marshal(v)
+			got, err := json.Marshal(v)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Marshal() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -821,7 +819,7 @@ func TestSpotXVpaid(t *testing.T) {
 						assert.FailNow(t, "Cannot open adparams file")
 					}
 					defer adParam.Close()
-					b, _ := ioutil.ReadAll(adParam)
+					b, _ := io.ReadAll(adParam)
 					assert.Equal(t, linear.AdParameters.Parameters, string(b))
 					if assert.Len(t, crea1.Linear.MediaFiles.MediaFile, 1) {
 						media1 := crea1.Linear.MediaFiles.MediaFile
@@ -853,7 +851,7 @@ func TestSpotXVpaid(t *testing.T) {
 								assert.FailNow(t, "Cannot open spotx html resource file")
 							}
 							defer htmlResource.Close()
-							b, _ := ioutil.ReadAll(htmlResource)
+							b, _ := io.ReadAll(htmlResource)
 							assert.Equal(t, companionAds2.HTMLResource.HTML, string(b))
 						}
 						companionAds3 := crea2.CompanionAds.Companions[2]
