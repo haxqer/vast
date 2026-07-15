@@ -1,5 +1,8 @@
 # Vast
 
+[![CI](https://github.com/haxqer/vast/actions/workflows/ci.yml/badge.svg)](https://github.com/haxqer/vast/actions/workflows/ci.yml)
+![Coverage](https://img.shields.io/badge/coverage-97.4%25-brightgreen)
+
 :star: VAST Ad generator and parser library on GoLang. XML / JSON.
 
 The struct model targets **VAST 4.3** (the latest version) and is backwards
@@ -145,6 +148,16 @@ Optional XML booleans retain their existing `bool` fields. When an explicit
 `...Set` field (for example, `VariableDurationSet` or `ScalableSet`). XML parsing
 sets these presence fields automatically, so XML and JSON round trips remain
 lossless.
+
+## Testing and coverage
+
+The test suite currently provides **97.4% statement coverage**. Run the same
+race-enabled coverage check used by CI with:
+
+```sh
+go test -race -coverprofile=coverage.out -covermode=atomic ./...
+go tool cover -func=coverage.out
+```
 
 ## Thanks
 + https://github.com/rs/vast
