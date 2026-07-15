@@ -77,3 +77,56 @@ func TestExtensionGeneric(t *testing.T) {
 	// assert the resulting marshaled extension
 	assert.Equal(t, string(extensionData), string(xmlExtensionOutput))
 }
+
+func TestExtensionMixedCustomTrackingAndData(t *testing.T) {
+	const source = `<Extension type="mixed"><CustomTracking><Tracking event="custom"><![CDATA[https://example.com/custom]]></Tracking></CustomTracking><VendorData mode="strict">value</VendorData></Extension>`
+	var extension Extension
+	assert.NoError(t, xml.Unmarshal([]byte(source), &extension))
+	assert.Len(t, extension.CustomTracking, 1)
+	assert.Equal(t, `<VendorData mode="strict">value</VendorData>`, extension.Data)
+
+	output, err := xml.Marshal(extension)
+	assert.NoError(t, err)
+	assert.Equal(t, source, string(output))
+}
+
+func TestExtensionParsedFieldsRemainWritable(t *testing.T) {
+	const source = `<Extension type="mixed"><CustomTracking><Tracking event="custom"><![CDATA[https://example.com/original]]></Tracking></CustomTracking><VendorData>original</VendorData></Extension>`
+	var extension Extension
+	assert.NoError(t, xml.Unmarshal([]byte(source), &extension))
+
+	extension.CustomTracking[0].URI = "https://example.com/changed"
+	extension.Data = `<VendorData>changed</VendorData>`
+	output, err := xml.Marshal(extension)
+	assert.NoError(t, err)
+	assert.Contains(t, string(output), "https://example.com/changed")
+	assert.Contains(t, string(output), `<VendorData>changed</VendorData>`)
+	assert.NotContains(t, string(output), "original")
+
+	extension.CustomTracking = nil
+	output, err = xml.Marshal(extension)
+	assert.NoError(t, err)
+	assert.NotContains(t, string(output), `<CustomTracking>`)
+	assert.Contains(t, string(output), `<VendorData>changed</VendorData>`)
+}
+
+func TestExtensionKeepsNestedCustomTrackingAsVendorData(t *testing.T) {
+	const source = `<Extension><VendorData><CustomTracking><Value>nested</Value></CustomTracking></VendorData></Extension>`
+	var extension Extension
+	assert.NoError(t, xml.Unmarshal([]byte(source), &extension))
+	assert.Empty(t, extension.CustomTracking)
+	assert.Equal(t, `<VendorData><CustomTracking><Value>nested</Value></CustomTracking></VendorData>`, extension.Data)
+}
+
+func TestExtensionReuseClearsLegacyData(t *testing.T) {
+	var extension Extension
+	assert.NoError(t, xml.Unmarshal(extensionData, &extension))
+	assert.NotEmpty(t, extension.Data)
+	assert.NoError(t, xml.Unmarshal(extensionCustomTracking, &extension))
+	assert.Empty(t, extension.Data)
+}
+
+func TestExtensionUnmarshalError(t *testing.T) {
+	var extension Extension
+	assert.Error(t, xml.Unmarshal([]byte(`<Extension><broken></Extension>`), &extension))
+}

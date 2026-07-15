@@ -28,6 +28,8 @@ func TestDurationMarshaler(t *testing.T) {
 	if assert.NoError(t, err) {
 		assert.Equal(t, "02:00:00", string(b))
 	}
+	_, err = Duration(-time.Nanosecond).MarshalText()
+	assert.EqualError(t, err, "invalid duration: -1ns")
 }
 
 func TestDurationUnmarshal(t *testing.T) {
@@ -55,6 +57,10 @@ func TestDurationUnmarshal(t *testing.T) {
 	if assert.NoError(t, d.UnmarshalText([]byte("00:00:00.123"))) {
 		assert.Equal(t, Duration(123*time.Millisecond), d)
 	}
+	// Reusing a Duration replaces the previous value rather than accumulating it.
+	if assert.NoError(t, d.UnmarshalText([]byte("00:00:01.001"))) {
+		assert.Equal(t, Duration(time.Second+time.Millisecond), d)
+	}
 	d = 0
 	if assert.NoError(t, d.UnmarshalText([]byte("undefined"))) {
 		assert.Equal(t, Duration(0), d)
@@ -67,5 +73,7 @@ func TestDurationUnmarshal(t *testing.T) {
 	assert.EqualError(t, d.UnmarshalText([]byte("00:60:00")), "invalid duration: 00:60:00")
 	assert.EqualError(t, d.UnmarshalText([]byte("00:00:00.-1")), "invalid duration: 00:00:00.-1")
 	assert.EqualError(t, d.UnmarshalText([]byte("00:00:00.1000")), "invalid duration: 00:00:00.1000")
+	assert.EqualError(t, d.UnmarshalText([]byte("00:00:00.1")), "invalid duration: 00:00:00.1")
+	assert.EqualError(t, d.UnmarshalText([]byte("00:00:00.abc")), "invalid duration: 00:00:00.abc")
 	assert.EqualError(t, d.UnmarshalText([]byte("00h01m")), "invalid duration: 00h01m")
 }

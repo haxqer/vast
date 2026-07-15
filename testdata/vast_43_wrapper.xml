@@ -2,7 +2,7 @@
 <!--
   Comprehensive VAST 4.3 Wrapper document.
 
-  Exercises the Wrapper branch of the VAST 4.3 human-readable schema (spec
+  Broadly exercises the Wrapper branch of the VAST 4.3 human-readable schema (spec
   section 5): the wrapper attributes (followAdditionalWrappers, allowMultipleAds,
   fallbackOnNoAd), <VASTAdTagURI>, <ViewableImpression>, <AdVerifications> with
   <BlockedAdCategories>, and wrapped Linear / NonLinear / Companion creatives.
@@ -11,9 +11,15 @@
   <Ad id="20002" adType="video">
     <Wrapper followAdditionalWrappers="false" allowMultipleAds="true" fallbackOnNoAd="false">
       <AdSystem version="4.3">iabtechlab</AdSystem>
-      <Impression id="Impression-ID"><![CDATA[https://example.com/track/impression]]></Impression>
-      <VASTAdTagURI><![CDATA[https://example.com/vast/secondary.xml]]></VASTAdTagURI>
       <Error><![CDATA[https://example.com/track/error/[ERRORCODE]]]></Error>
+      <Extensions>
+        <Extension type="iab-Count">
+          <CustomTracking>
+            <Tracking event="interactiveStart"><![CDATA[https://example.com/track/interactiveStart]]></Tracking>
+          </CustomTracking>
+        </Extension>
+      </Extensions>
+      <Impression id="Impression-ID"><![CDATA[https://example.com/track/impression]]></Impression>
       <Pricing model="cpm" currency="USD"><![CDATA[25.00]]></Pricing>
       <ViewableImpression id="viewable-impression-id">
         <Viewable><![CDATA[https://example.com/track/viewable]]></Viewable>
@@ -22,8 +28,8 @@
       </ViewableImpression>
       <AdVerifications>
         <Verification vendor="company.com-omid">
-          <JavaScriptResource apiFramework="omid" browserOptional="true"><![CDATA[https://verificationcompany1.com/verification_script1.js]]></JavaScriptResource>
           <ExecutableResource apiFramework="omid" type="no-op"><![CDATA[https://verificationcompany1.com/executable_resource]]></ExecutableResource>
+          <JavaScriptResource apiFramework="omid" browserOptional="true"><![CDATA[https://verificationcompany1.com/verification_script1.js]]></JavaScriptResource>
           <TrackingEvents>
             <Tracking event="verificationNotExecuted"><![CDATA[https://verificationcompany1.com/tracking/verificationNotExecuted]]></Tracking>
           </TrackingEvents>
@@ -31,25 +37,9 @@
         </Verification>
       </AdVerifications>
       <BlockedAdCategories authority="https://www.iabtechlab.com/categoryauthority">gambling</BlockedAdCategories>
-      <Extensions>
-        <Extension type="iab-Count">
-          <CustomTracking>
-            <Tracking event="interactiveStart"><![CDATA[https://example.com/track/interactiveStart]]></Tracking>
-          </CustomTracking>
-        </Extension>
-      </Extensions>
       <Creatives>
         <Creative id="5490" sequence="1" adId="2447230">
           <Linear>
-            <TrackingEvents>
-              <Tracking event="start"><![CDATA[https://example.com/track/wrapper/start]]></Tracking>
-              <Tracking event="complete"><![CDATA[https://example.com/track/wrapper/complete]]></Tracking>
-            </TrackingEvents>
-            <VideoClicks>
-              <ClickThrough id="wrapper-click-through"><![CDATA[https://example.com/wrapper/clickThrough]]></ClickThrough>
-              <ClickTracking id="wrapper-click-tracking"><![CDATA[https://example.com/track/wrapper/clickThrough]]></ClickTracking>
-              <CustomClick id="wrapper-custom-click"><![CDATA[https://example.com/track/wrapper/customClick]]></CustomClick>
-            </VideoClicks>
             <Icons>
               <Icon program="AdChoices" width="60" height="20" xPosition="right" yPosition="top" offset="00:00:00" duration="00:00:16" apiFramework="omid" pxratio="1">
                 <StaticResource creativeType="image/png"><![CDATA[https://example.com/icon/adchoices.png]]></StaticResource>
@@ -59,17 +49,25 @@
                 </IconClicks>
               </Icon>
             </Icons>
-            <InteractiveCreativeFile apiFramework="SIMID" type="text/html" variableDuration="true"><![CDATA[data:text/html,%3Chtml%3E%3Cbody%3EWrapper%3C%2Fbody%3E%3C%2Fhtml%3E]]></InteractiveCreativeFile>
+            <TrackingEvents>
+              <Tracking event="start"><![CDATA[https://example.com/track/wrapper/start]]></Tracking>
+              <Tracking event="complete"><![CDATA[https://example.com/track/wrapper/complete]]></Tracking>
+            </TrackingEvents>
+            <VideoClicks>
+              <ClickTracking id="wrapper-click-tracking"><![CDATA[https://example.com/track/wrapper/clickThrough]]></ClickTracking>
+              <ClickThrough id="wrapper-click-through"><![CDATA[https://example.com/wrapper/clickThrough]]></ClickThrough>
+              <CustomClick id="wrapper-custom-click"><![CDATA[https://example.com/track/wrapper/customClick]]></CustomClick>
+            </VideoClicks>
           </Linear>
         </Creative>
         <Creative id="5491" sequence="2" adId="2447231">
           <NonLinearAds>
-            <NonLinear id="wrapper-nonlinear-1" width="480" height="70" apiFramework="omid">
-              <NonLinearClickTracking><![CDATA[https://example.com/track/wrapper/nonlinearClick]]></NonLinearClickTracking>
-            </NonLinear>
             <TrackingEvents>
               <Tracking event="creativeView"><![CDATA[https://example.com/track/wrapper/nonlinearCreativeView]]></Tracking>
             </TrackingEvents>
+            <NonLinear>
+              <NonLinearClickTracking><![CDATA[https://example.com/track/wrapper/nonlinearClick]]></NonLinearClickTracking>
+            </NonLinear>
           </NonLinearAds>
         </Creative>
         <Creative id="5492" sequence="3" adId="2447232">
@@ -85,6 +83,7 @@
           </CompanionAds>
         </Creative>
       </Creatives>
+      <VASTAdTagURI><![CDATA[https://example.com/vast/secondary.xml]]></VASTAdTagURI>
     </Wrapper>
   </Ad>
 </VAST>

@@ -11,10 +11,14 @@ import "encoding/xml"
 
 // VAST is the root <VAST> tag
 type VAST struct {
-	// The version of the VAST spec (should be either "2.0" or "3.0")
+	// The version of the VAST specification. The model targets VAST 4.3 and
+	// remains compatible with VAST 2.0 through 4.2 documents.
 	Version string `xml:"version,attr" json:",omitempty"`
 	// XML namespace. Most likely 'http://www.iab.com/VAST'
 	XMLNS string `xml:"xmlns,attr,omitempty" json:"xmlns,omitempty"`
+	// Attributes preserves additional root attributes, such as schema-location
+	// declarations. Version and the default xmlns continue to use named fields.
+	Attributes []xml.Attr `xml:"-" json:",omitempty"`
 	// One or more Ad elements. Advertisers and video content publishers may
 	// associate an <Ad> element with a line item video ad defined in contract
 	// documentation, usually an insertion order. These line item ads typically
@@ -58,6 +62,9 @@ type Ad struct {
 	// A value of true indicates that the ad is conditional and should be used in all cases where the InLine executable unit (such as VPAID) is not an ad but is instead a framework for finding an ad;
 	// a value of false is the default value and indicates that an ad is available.
 	ConditionalAd bool `xml:"conditionalAd,attr,omitempty" json:",omitempty"`
+	// ConditionalAdSet distinguishes an explicitly supplied false value from an
+	// omitted conditionalAd attribute. XML unmarshalling sets it automatically.
+	ConditionalAdSet bool `xml:"-" json:",omitempty"`
 }
 
 type CDATAString struct {
@@ -91,12 +98,16 @@ type InLine struct {
 	// (RTB) systems. VAST is not designed to handle RTB since other methods exist,
 	// but this element is offered for custom solutions if needed.
 	Pricing *Pricing `xml:",omitempty" json:",omitempty"`
+	// Optional publisher viewability tracking resources.
+	ViewableImpression *ViewableImpression `xml:",omitempty" json:",omitempty"`
 	// Any ad server that returns a VAST containing an <InLine> ad must generate a pseudo- unique identifier
 	// that is appropriate for all involved parties to track the lifecycle of that ad.
 	// Example: ServerName-47ed3bac-1768-4b9a-9d0e-0b92422ab066
 	AdServingId string `xml:",omitempty" json:",omitempty"`
 	// The common name of the ad
 	AdTitle PlainString
+	// Third-party measurement resources and metadata.
+	AdVerifications *AdVerifications `xml:"AdVerifications,omitempty" json:",omitempty"`
 	// The name of the advertiser as defined by the ad serving party.
 	// This element can be used to prevent displaying ads with advertiser
 	// competitors. Ad serving parties and publishers should identify how
@@ -109,26 +120,12 @@ type InLine struct {
 	Creatives []Creative `xml:"Creatives>Creative"`
 	// A string value that provides a longer description of the ad.
 	Description *CDATAString `xml:",omitempty" json:",omitempty"`
-	// A URI to a survey vendor that could be the survey, a tracking pixel,
-	// or anything to do with the survey. Multiple survey elements can be provided.
-	// A type attribute is available to specify the MIME type being served.
-	// For example, the attribute might be set to type=”text/javascript”.
-	// Surveys can be dynamically inserted into the VAST response as long as
-	// cross-domain issues are avoided.
-	Survey *Survey `xml:",omitempty" json:",omitempty"`
 	// The number of seconds in which the ad is valid for execution.
-	//In cases where the ad is requested ahead of time, this timing indicates how many seconds after the request that the ad expires and cannot be played.
-	//This element is useful for preventing an ad from playing after a timeout has occurred.
+	// In cases where the ad is requested ahead of time, this indicates how many
+	// seconds after the request the ad expires and cannot be played.
 	Expires *int `xml:"Expires,omitempty" json:"Expires,omitempty"`
-	// The ad server may provide URIs for tracking publisher-determined viewability,
-	// for both the InLine ad and any Wrappers, using the <ViewableImpression> element.
-	// Tracking URIs may be provided in three containers: <Viewable>, <NotViewable>, and <ViewUndetermined>.
-	ViewableImpression *ViewableImpression `xml:",omitempty" json:",omitempty"`
-	// The <AdVerifications> element contains one or more <Verification> elements,
-	// which list the resources and metadata required to execute third-party measurement code in order to verify creative playback.
-	// The <AdVerifications> element is used to contain one or more <Verification> elements,
-	// which are used to initiate a controlled container where code can be executed for collecting data to verify ad playback details.
-	AdVerifications *AdVerifications `xml:"AdVerifications,omitempty" json:",omitempty"`
+	// A URI to a survey vendor, with an optional MIME type.
+	Survey *Survey `xml:",omitempty" json:",omitempty"`
 }
 
 // Impression is a URI that directs the video player to a tracking resource file that
@@ -174,10 +171,6 @@ type Wrapper struct {
 	// One or more URIs that directs the video player to a tracking resource file that the
 	// video player should request when the first frame of the ad is displayed
 	Impressions []Impression `xml:"Impression"`
-	// The container for one or more <Creative> elements
-	Creatives []CreativeWrapper `xml:"Creatives>Creative"`
-	// URL of ad tag of downstream Secondary Ad Server
-	VASTAdTagURI CDATAString
 	// Provides a value that represents a price that can be used by real-time bidding
 	// (RTB) systems. VAST is not designed to handle RTB since other methods exist,
 	// but this element is offered for custom solutions if needed.
@@ -195,6 +188,10 @@ type Wrapper struct {
 	// programs. In VAST 4.x <BlockedAdCategories> is a direct child of the
 	// <Wrapper> element (spec section 3.19.2).
 	BlockedAdCategories []Category `xml:"BlockedAdCategories,omitempty" json:",omitempty"`
+	// The container for one or more wrapped creatives.
+	Creatives []CreativeWrapper `xml:"Creatives>Creative,omitempty" json:",omitempty"`
+	// URL of the downstream secondary ad server's VAST response.
+	VASTAdTagURI CDATAString
 
 	FallbackOnNoAd           *bool `xml:"fallbackOnNoAd,attr,omitempty" json:",omitempty"`
 	AllowMultipleAds         *bool `xml:"allowMultipleAds,attr,omitempty" json:",omitempty"`
@@ -217,14 +214,8 @@ type Creative struct {
 	AdID string `xml:"adId,attr,omitempty" json:",omitempty"`
 	// The technology used for any included API
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
-	// If present, provides a VAST 4.x universal ad id
-	UniversalAdID *[]UniversalAdID `xml:"UniversalAdId,omitempty" json:",omitempty"`
-	// If present, defines a linear creative
-	Linear *Linear `xml:",omitempty" json:",omitempty"`
-	// If defined, defins companions creatives
+	// If present, defines companion creatives.
 	CompanionAds *CompanionAds `xml:",omitempty" json:",omitempty"`
-	// If defined, defines non linear creatives
-	NonLinearAds *NonLinearAds `xml:",omitempty" json:",omitempty"`
 	// When an API framework is needed to execute creative, a
 	// <CreativeExtensions> element can be added under the <Creative>. This
 	// extension can be used to load an executable creative with or without using
@@ -237,6 +228,12 @@ type Creative struct {
 	// The nested <CreativeExtension> includes an attribute for type, which
 	// specifies the MIME type needed to execute the extension.
 	CreativeExtensions *[]Extension `xml:"CreativeExtensions>CreativeExtension,omitempty" json:",omitempty"`
+	// If present, defines a linear creative.
+	Linear *Linear `xml:",omitempty" json:",omitempty"`
+	// If present, defines non-linear creatives.
+	NonLinearAds *NonLinearAds `xml:",omitempty" json:",omitempty"`
+	// VAST 4.x universal creative identifiers.
+	UniversalAdID *[]UniversalAdID `xml:"UniversalAdId,omitempty" json:",omitempty"`
 }
 
 // <CompanionAds> contains companions creatives
@@ -263,10 +260,10 @@ type CreativeWrapper struct {
 	Sequence int `xml:"sequence,attr,omitempty" json:",omitempty"`
 	// Identifies the ad with which the creative is served
 	AdID string `xml:"adId,attr,omitempty" json:",omitempty"`
-	// If present, defines a linear creative
-	Linear *LinearWrapper `xml:",omitempty" json:",omitempty"`
 	// If defined, defines companions creatives
 	CompanionAds *CompanionAds `xml:"CompanionAds,omitempty" json:",omitempty"`
+	// If present, defines a linear creative
+	Linear *LinearWrapper `xml:",omitempty" json:",omitempty"`
 	// If defined, defines non linear creatives
 	NonLinearAds *NonLinearAdsWrapper `xml:"NonLinearAds,omitempty" json:",omitempty"`
 }
@@ -293,23 +290,23 @@ type Linear struct {
 	// represents milliseconds and is optional. This skipoffset value
 	// indicates when the skip control should be provided after the creative
 	// begins playing.
-	SkipOffset *Offset `xml:"skipoffset,attr,omitempty" json:",omitempty"`
-	// Duration in standard time format, hh:mm:ss
-	Duration       Duration        `xml:"Duration,omitempty" json:",omitempty"`
-	Icons          *Icons          `json:",omitempty"`
+	SkipOffset     *Offset         `xml:"skipoffset,attr,omitempty" json:",omitempty"`
+	Icons          *Icons          `xml:"Icons,omitempty" json:",omitempty"`
 	TrackingEvents *TrackingEvents `xml:"TrackingEvents,omitempty" json:",omitempty"`
 	AdParameters   *AdParameters   `xml:",omitempty" json:",omitempty"`
-	VideoClicks    *VideoClicks    `xml:",omitempty" json:",omitempty"`
-	MediaFiles     *MediaFiles     `xml:"MediaFiles" json:",omitempty"`
+	// Duration is required. Zero is valid and must not be omitted.
+	Duration    Duration     `xml:"Duration" json:",omitempty"`
+	MediaFiles  *MediaFiles  `xml:"MediaFiles" json:",omitempty"`
+	VideoClicks *VideoClicks `xml:",omitempty" json:",omitempty"`
 }
 
 // <LinearWrapper> defines a wrapped linear creative
 type LinearWrapper struct {
-	Icons          *Icons          `json:",omitempty"`
+	Icons          *Icons          `xml:"Icons,omitempty" json:",omitempty"`
 	TrackingEvents *TrackingEvents `xml:"TrackingEvents,omitempty" json:",omitempty"`
 	VideoClicks    *VideoClicks    `xml:",omitempty" json:",omitempty"`
-	// In the Wrapper branch of the VAST 4.3 schema (section 5, section 3.9.3)
-	// an <InteractiveCreativeFile> may be provided directly under <Linear>.
+	// Retained for permissive parsing of historical documents. VAST 4.3 defines
+	// InteractiveCreativeFile under InLine/Linear/MediaFiles only.
 	InteractiveCreativeFile []InteractiveCreativeFile `xml:"InteractiveCreativeFile,omitempty" json:",omitempty"`
 }
 
@@ -318,9 +315,9 @@ type Companion struct {
 	// Optional identifier
 	ID string `xml:"id,attr,omitempty" json:",omitempty"`
 	// Pixel dimensions of companion slot.
-	Width int `xml:"width,attr,omitempty"`
+	Width int `xml:"width,attr"`
 	// Pixel dimensions of companion slot.
-	Height int `xml:"height,attr,omitempty"`
+	Height int `xml:"height,attr"`
 	// Pixel dimensions of the companion asset.
 	AssetWidth int `xml:"assetWidth,attr,omitempty"`
 	// Pixel dimensions of the companion asset.
@@ -332,27 +329,29 @@ type Companion struct {
 	// The apiFramework defines the method to use for communication with the companion.
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
 	// Used to match companion creative to publisher placement areas on the page.
-	AdSlotID string `xml:"adSlotId,attr,omitempty" json:",omitempty"`
-	// URL to open as destination page when user clicks on the the companion banner ad.
-	CompanionClickThrough *CDATAString `xml:",omitempty" json:",omitempty"`
-	// URLs to ping when user clicks on the the companion banner ad.
-	CompanionClickTrackings []CompanionClickTracking `xml:"CompanionClickTracking,omitempty" json:",omitempty"`
-	// Alt text to be displayed when companion is rendered in HTML environment.
-	AltText string `xml:",omitempty" json:",omitempty"`
-	// The creativeView should always be requested when present. For Companions
-	// creativeView is the only supported event.
-	TrackingEvents *TrackingEvents `xml:"TrackingEvents,omitempty" json:",omitempty"`
-	// Data to be passed into the companion ads. The apiFramework defines the method
-	// to use for communication (e.g. “FlashVar”)
+	AdSlotID      string `xml:"adSlotId,attr,omitempty" json:",omitempty"`
+	Pxratio       string `xml:"pxratio,attr,omitempty" json:",omitempty"`
+	RenderingMode string `xml:"renderingMode,attr,omitempty" json:",omitempty"`
+
+	// Each creative resource kind is unbounded in VAST 4.3. The singular fields
+	// remain as compatibility aliases for the first plural resource.
+	HTMLResources   []HTMLResource   `xml:"HTMLResource,omitempty" json:",omitempty"`
+	IFrameResources []CDATAString    `xml:"IFrameResource,omitempty" json:",omitempty"`
+	StaticResources []StaticResource `xml:"StaticResource,omitempty" json:",omitempty"`
+	HTMLResource    *HTMLResource    `xml:"-" json:",omitempty"`
+	IFrameResource  *CDATAString     `xml:"-" json:",omitempty"`
+	StaticResource  *StaticResource  `xml:"-" json:",omitempty"`
+	resourceAliases resourceAliasState
+
 	AdParameters *AdParameters `xml:",omitempty" json:",omitempty"`
-	// URL to a static file, such as an image or SWF file
-	StaticResource *StaticResource `xml:",omitempty" json:",omitempty"`
-	// URL source for an IFrame to display the companion element
-	IFrameResource *CDATAString `xml:",omitempty" json:",omitempty"`
-	// HTML to display the companion element
-	HTMLResource  *HTMLResource `xml:",omitempty" json:",omitempty"`
-	Pxratio       string        `xml:"pxratio,attr,omitempty" json:",omitempty"`
-	RenderingMode string        `xml:"renderingMode,attr,omitempty" json:",omitempty"`
+	AltText      string        `xml:",omitempty" json:",omitempty"`
+	// URL to open as destination page when the companion is clicked.
+	CompanionClickThrough *CDATAString `xml:",omitempty" json:",omitempty"`
+	// URLs to ping when the companion is clicked.
+	CompanionClickTrackings []CompanionClickTracking `xml:"CompanionClickTracking,omitempty" json:",omitempty"`
+	CreativeExtensions      *[]Extension             `xml:"CreativeExtensions>CreativeExtension,omitempty" json:",omitempty"`
+	// For Companions, creativeView is the only standard tracking event.
+	TrackingEvents *TrackingEvents `xml:"TrackingEvents,omitempty" json:",omitempty"`
 }
 
 // <NonLinear> defines a non linear ad
@@ -360,28 +359,34 @@ type NonLinear struct {
 	// Optional identifier
 	ID string `xml:"id,attr,omitempty" json:",omitempty"`
 	// Pixel dimensions of companion.
-	Width int `xml:"width,attr,omitempty"`
+	Width int `xml:"width,attr"`
 	// Pixel dimensions of companion.
-	Height int `xml:"height,attr,omitempty"`
+	Height int `xml:"height,attr"`
 	// Pixel dimensions of expanding nonlinear ad when in expanded state.
 	ExpandedWidth int `xml:"expandedWidth,attr,omitempty"`
 	// Pixel dimensions of expanding nonlinear ad when in expanded state.
 	ExpandedHeight int `xml:"expandedHeight,attr,omitempty"`
 	// Whether it is acceptable to scale the image.
 	Scalable bool `xml:"scalable,attr,omitempty" json:",omitempty"`
+	// ScalableSet preserves an explicitly supplied false attribute.
+	ScalableSet bool `xml:"-" json:",omitempty"`
 	// Whether the ad must have its aspect ratio maintained when scales.
 	MaintainAspectRatio bool `xml:"maintainAspectRatio,attr,omitempty" json:",omitempty"`
+	// MaintainAspectRatioSet preserves an explicitly supplied false attribute.
+	MaintainAspectRatioSet bool `xml:"-" json:",omitempty"`
 	// Suggested duration to display non-linear ad, typically for animation to complete.
 	// Expressed in standard time format hh:mm:ss.
 	MinSuggestedDuration *Duration `xml:"minSuggestedDuration,attr,omitempty" json:",omitempty"`
 	// The apiFramework defines the method to use for communication with the nonlinear element.
-	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
-	// HTML to display the companion element
-	HTMLResource *HTMLResource `xml:",omitempty" json:",omitempty"`
-	// URL source for an IFrame to display the companion element
-	IFrameResource *CDATAString `xml:",omitempty" json:",omitempty"`
-	// URL to a static file, such as an image or SWF file
-	StaticResource *StaticResource `xml:",omitempty" json:",omitempty"`
+	APIFramework    string           `xml:"apiFramework,attr,omitempty" json:",omitempty"`
+	HTMLResources   []HTMLResource   `xml:"HTMLResource,omitempty" json:",omitempty"`
+	IFrameResources []CDATAString    `xml:"IFrameResource,omitempty" json:",omitempty"`
+	StaticResources []StaticResource `xml:"StaticResource,omitempty" json:",omitempty"`
+	// Deprecated singular aliases for the first resource of each kind.
+	HTMLResource    *HTMLResource   `xml:"-" json:",omitempty"`
+	IFrameResource  *CDATAString    `xml:"-" json:",omitempty"`
+	StaticResource  *StaticResource `xml:"-" json:",omitempty"`
+	resourceAliases resourceAliasState
 	// Data to be passed into the video ad.
 	AdParameters *AdParameters `xml:",omitempty" json:",omitempty"`
 	// URL to open as destination page when user clicks on the non-linear ad unit.
@@ -403,9 +408,11 @@ type NonLinearWrapper struct {
 	// Pixel dimensions of expanding nonlinear ad when in expanded state.
 	ExpandedHeight int `xml:"expandedHeight,attr,omitempty"`
 	// Whether it is acceptable to scale the image.
-	Scalable bool `xml:"scalable,attr,omitempty" json:",omitempty"`
+	Scalable    bool `xml:"scalable,attr,omitempty" json:",omitempty"`
+	ScalableSet bool `xml:"-" json:",omitempty"`
 	// Whether the ad must have its aspect ratio maintained when scales.
-	MaintainAspectRatio bool `xml:"maintainAspectRatio,attr,omitempty" json:",omitempty"`
+	MaintainAspectRatio    bool `xml:"maintainAspectRatio,attr,omitempty" json:",omitempty"`
+	MaintainAspectRatioSet bool `xml:"-" json:",omitempty"`
 	// Suggested duration to display non-linear ad, typically for animation to complete.
 	// Expressed in standard time format hh:mm:ss.
 	MinSuggestedDuration *Duration `xml:"minSuggestedDuration,attr,omitempty" json:",omitempty"`
@@ -413,8 +420,11 @@ type NonLinearWrapper struct {
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
 	// The creativeView should always be requested when present.
 	TrackingEvents *TrackingEvents `xml:"TrackingEvents,omitempty" json:",omitempty"`
-	// URLs to ping when user clicks on the the non-linear ad.
-	NonLinearClickTracking []CDATAString `xml:",omitempty" json:",omitempty"`
+	// URLs to ping when the user clicks the non-linear ad, including optional IDs.
+	NonLinearClickTrackings []NonLinearClickTracking `xml:"NonLinearClickTracking,omitempty" json:",omitempty"`
+	// NonLinearClickTracking is the legacy URI-only representation.
+	NonLinearClickTracking []CDATAString `xml:"-" json:",omitempty"`
+	clickTrackingAlias     clickTrackingAliasState
 }
 
 type Icons struct {
@@ -437,9 +447,11 @@ type Icon struct {
 	// Must match ([0-9]*|top|bottom)
 	YPosition string `xml:"yPosition,attr,omitempty"`
 	// Start time at which the player should display the icon. Expressed in standard time format hh:mm:ss.
-	Offset Offset `xml:"offset,attr,omitempty"`
+	Offset    Offset `xml:"-" json:",omitempty"`
+	OffsetSet bool   `xml:"-" json:",omitempty"`
 	// duration for which the player must display the icon. Expressed in standard time format hh:mm:ss.
-	Duration Duration `xml:"duration,attr,omitempty"`
+	Duration    Duration `xml:"duration,attr,omitempty"`
+	DurationSet bool     `xml:"-" json:",omitempty"`
 	// The apiFramework defines the method to use for communication with the icon element
 	APIFramework string `xml:"apiFramework,attr,omitempty" json:",omitempty"`
 	// The pixel ratio for which the icon creative is intended.
@@ -453,21 +465,22 @@ type Icon struct {
 	AltText string `xml:"altText,attr,omitempty" json:",omitempty"`
 	// Hover text for the image.
 	// In an html5 image tag this should be the text for the title attribute.
-	HoverText string `xml:"hoverText,attr,omitempty" json:",omitempty"`
-	// The view tracking for icons is used to track when the icon creative is displayed.
-	// The player uses the included URI to notify the icon server when the icon has been displayed.
-	IconViewTracking []CDATAString `xml:",omitempty" json:",omitempty"`
-	// URL to open as destination page when user clicks on the icon.
-	IconClickThrough *CDATAString `xml:"IconClicks>IconClickThrough,omitempty" json:",omitempty"`
-	// URLs to ping when user clicks on the the icon.
-	IconClickTracking       []IconClickTracking      `xml:"IconClicks>IconClickTracking,omitempty" json:",omitempty"`
-	IconClickFallbackImages *IconClickFallbackImages `xml:"IconClicks>IconClickFallbackImages,omitempty" json:",omitempty"`
-	// URL to a static file, such as an image or SWF file
-	StaticResource *StaticResource `xml:",omitempty" json:",omitempty"`
-	// URL source for an IFrame to display the companion element
-	IFrameResource *CDATAString `xml:",omitempty" json:",omitempty"`
-	// HTML to display the companion element
-	HTMLResource *HTMLResource `xml:",omitempty" json:",omitempty"`
+	HoverText       string           `xml:"hoverText,attr,omitempty" json:",omitempty"`
+	HTMLResources   []HTMLResource   `xml:"HTMLResource,omitempty" json:",omitempty"`
+	IFrameResources []CDATAString    `xml:"IFrameResource,omitempty" json:",omitempty"`
+	StaticResources []StaticResource `xml:"StaticResource,omitempty" json:",omitempty"`
+	// Deprecated singular aliases for the first resource of each kind.
+	HTMLResource    *HTMLResource   `xml:"-" json:",omitempty"`
+	IFrameResource  *CDATAString    `xml:"-" json:",omitempty"`
+	StaticResource  *StaticResource `xml:"-" json:",omitempty"`
+	resourceAliases resourceAliasState
+	// Legacy flattened IconClicks fields. XML encoding emits the container only
+	// when at least one child is present.
+	IconClickFallbackImages *IconClickFallbackImages `xml:"-" json:",omitempty"`
+	IconClickThrough        *CDATAString             `xml:"-" json:",omitempty"`
+	IconClickTracking       []IconClickTracking      `xml:"-" json:",omitempty"`
+	// The player requests these URIs when the icon is displayed.
+	IconViewTracking []CDATAString `xml:"-" json:",omitempty"`
 }
 
 // <Tracking> defines an event tracking URL
@@ -503,22 +516,24 @@ type StaticResource struct {
 // <HTMLResource> is a container for HTML data
 type HTMLResource struct {
 	// Specifies whether the HTML is XML-encoded
-	XMLEncoded bool   `xml:"xmlEncoded,attr,omitempty" json:",omitempty"`
-	HTML       string `xml:",cdata"`
+	XMLEncoded    bool   `xml:"xmlEncoded,attr,omitempty" json:",omitempty"`
+	XMLEncodedSet bool   `xml:"-" json:",omitempty"`
+	HTML          string `xml:",cdata"`
 }
 
 // <AdParameters> defines arbitrary ad parameters
 type AdParameters struct {
 	// Specifies whether the parameters are XML-encoded
-	XMLEncoded bool   `xml:"xmlEncoded,attr,omitempty" json:",omitempty"`
-	Parameters string `xml:",cdata"`
+	XMLEncoded    bool   `xml:"xmlEncoded,attr,omitempty" json:",omitempty"`
+	XMLEncodedSet bool   `xml:"-" json:",omitempty"`
+	Parameters    string `xml:",cdata"`
 }
 
 // <VideoClicks> contains types of video clicks
 type VideoClicks struct {
 	ClickTrackings []VideoClick `xml:"ClickTracking,omitempty" json:",omitempty"`
-	CustomClicks   []VideoClick `xml:"CustomClick,omitempty" json:",omitempty"`
 	ClickThroughs  []VideoClick `xml:"ClickThrough,omitempty" json:",omitempty"`
+	CustomClicks   []VideoClick `xml:"CustomClick,omitempty" json:",omitempty"`
 }
 
 // <VideoClick> defines a click URL for a linear creative
@@ -552,9 +567,11 @@ type MediaFile struct {
 	// MinBitrate must be supplied and Bitrate should not be supplied.
 	MaxBitrate int `xml:"maxBitrate,attr,omitempty" json:",omitempty"`
 	// Whether it is acceptable to scale the image.
-	Scalable bool `xml:"scalable,attr,omitempty" json:",omitempty"`
+	Scalable    bool `xml:"scalable,attr,omitempty" json:",omitempty"`
+	ScalableSet bool `xml:"-" json:",omitempty"`
 	// Whether the ad must have its aspect ratio maintained when scales.
-	MaintainAspectRatio bool `xml:"maintainAspectRatio,attr,omitempty" json:",omitempty"`
+	MaintainAspectRatio    bool `xml:"maintainAspectRatio,attr,omitempty" json:",omitempty"`
+	MaintainAspectRatioSet bool `xml:"-" json:",omitempty"`
 	// The codec used to produce the media file.
 	Codec string `xml:"codec,attr,omitempty" json:",omitempty"`
 	// The APIFramework defines the method to use for communication if the MediaFile
@@ -609,14 +626,14 @@ type Survey struct {
 	// A type attribute is available to specify the MIME type being served. For example,
 	// the attribute might be set to type="text/javascript".
 	// Surveys can be dynamically inserted into the VAST response as long as cross-domain issues are avoided.
-	Type string `xml:"type,attr"`
+	Type string `xml:"type,attr,omitempty"`
 	// A URI to any resource relating to an integrated survey.
 	URI string `xml:",cdata"`
 }
 
 type MediaFiles struct {
+	ClosedCaptionFiles      *[]ClosedCaptionFile      `xml:"ClosedCaptionFiles>ClosedCaptionFile,omitempty" json:",omitempty"`
 	MediaFile               []MediaFile               `xml:",omitempty" json:",omitempty"`
 	Mezzanine               []Mezzanine               `xml:",omitempty" json:",omitempty"`
 	InteractiveCreativeFile []InteractiveCreativeFile `xml:",omitempty" json:",omitempty"`
-	ClosedCaptionFiles      *[]ClosedCaptionFile      `xml:"ClosedCaptionFiles>ClosedCaptionFile,omitempty" json:",omitempty"`
 }

@@ -3,39 +3,15 @@
   Comprehensive VAST 4.3 InLine document.
 
   Hand-authored (the IAB VAST_Samples repository ships samples only through 4.2)
-  to exercise every element and attribute of the InLine branch of the VAST 4.3
-  human-readable schema (spec section 5), including the 4.3 headline feature:
+  to broadly exercise the InLine branch of the VAST 4.3 human-readable schema
+  (spec section 5), including the 4.3 headline feature:
   an inline data: URI on <InteractiveCreativeFile>.
 -->
 <VAST version="4.3" xmlns="http://www.iab.com/VAST">
   <Ad id="20001" sequence="1" adType="video">
     <InLine>
       <AdSystem version="4.3">iabtechlab</AdSystem>
-      <AdTitle>VAST 4.3 Complete InLine Example</AdTitle>
-      <Impression id="Impression-ID"><![CDATA[https://example.com/track/impression]]></Impression>
-      <AdServingId>a532d16d-4d7f-4440-bd29-2ec0e693fc80</AdServingId>
-      <Category authority="https://www.iabtechlab.com/categoryauthority">AD CONTENT description category</Category>
-      <Description><![CDATA[VAST 4.3 compliance fixture covering the full InLine schema.]]></Description>
-      <Advertiser id="advertiser-id-123">example.com</Advertiser>
-      <Pricing model="cpm" currency="USD"><![CDATA[25.00]]></Pricing>
-      <Survey type="text/javascript"><![CDATA[https://example.com/survey]]></Survey>
       <Error><![CDATA[https://example.com/track/error/[ERRORCODE]]]></Error>
-      <Expires>3600</Expires>
-      <ViewableImpression id="viewable-impression-id">
-        <Viewable><![CDATA[https://example.com/track/viewable]]></Viewable>
-        <NotViewable><![CDATA[https://example.com/track/notViewable]]></NotViewable>
-        <ViewUndetermined><![CDATA[https://example.com/track/viewUndetermined]]></ViewUndetermined>
-      </ViewableImpression>
-      <AdVerifications>
-        <Verification vendor="company.com-omid">
-          <JavaScriptResource apiFramework="omid" browserOptional="true"><![CDATA[https://verificationcompany1.com/verification_script1.js]]></JavaScriptResource>
-          <ExecutableResource apiFramework="omid" type="no-op"><![CDATA[https://verificationcompany1.com/executable_resource]]></ExecutableResource>
-          <TrackingEvents>
-            <Tracking event="verificationNotExecuted"><![CDATA[https://verificationcompany1.com/tracking/verificationNotExecuted]]></Tracking>
-          </TrackingEvents>
-          <VerificationParameters><![CDATA[{"key":"value"}]]></VerificationParameters>
-        </Verification>
-      </AdVerifications>
       <Extensions>
         <Extension type="iab-Count">
           <CustomTracking>
@@ -43,28 +19,46 @@
           </CustomTracking>
         </Extension>
       </Extensions>
+      <Impression id="Impression-ID"><![CDATA[https://example.com/track/impression]]></Impression>
+      <Pricing model="cpm" currency="USD"><![CDATA[25.00]]></Pricing>
+      <ViewableImpression id="viewable-impression-id">
+        <Viewable><![CDATA[https://example.com/track/viewable]]></Viewable>
+        <NotViewable><![CDATA[https://example.com/track/notViewable]]></NotViewable>
+        <ViewUndetermined><![CDATA[https://example.com/track/viewUndetermined]]></ViewUndetermined>
+      </ViewableImpression>
+      <AdServingId>a532d16d-4d7f-4440-bd29-2ec0e693fc80</AdServingId>
+      <AdTitle>VAST 4.3 Complete InLine Example</AdTitle>
+      <AdVerifications>
+        <Verification vendor="company.com-omid">
+          <ExecutableResource apiFramework="omid" type="no-op"><![CDATA[https://verificationcompany1.com/executable_resource]]></ExecutableResource>
+          <JavaScriptResource apiFramework="omid" browserOptional="true"><![CDATA[https://verificationcompany1.com/verification_script1.js]]></JavaScriptResource>
+          <TrackingEvents>
+            <Tracking event="verificationNotExecuted"><![CDATA[https://verificationcompany1.com/tracking/verificationNotExecuted]]></Tracking>
+          </TrackingEvents>
+          <VerificationParameters><![CDATA[{"key":"value"}]]></VerificationParameters>
+        </Verification>
+      </AdVerifications>
+      <Advertiser id="advertiser-id-123">example.com</Advertiser>
+      <Category authority="https://www.iabtechlab.com/categoryauthority">AD CONTENT description category</Category>
       <Creatives>
         <Creative id="5480" sequence="1" adId="2447226" apiFramework="omid">
-          <UniversalAdId idRegistry="Ad-ID">8465</UniversalAdId>
-          <UniversalAdId idRegistry="another-registry">test-8465</UniversalAdId>
           <Linear skipoffset="00:00:05">
-            <Duration>00:00:16</Duration>
-            <AdParameters xmlEncoded="true"><![CDATA[params=1]]></AdParameters>
-            <MediaFiles>
-              <Mezzanine delivery="progressive" type="video/mp4" width="1280" height="720" codec="h264" id="mezzanine-1" fileSize="1048576" mediaType="2D"><![CDATA[https://example.com/media/mezzanine.mp4]]></Mezzanine>
-              <MediaFile id="5241" delivery="progressive" type="video/mp4" bitrate="2000" width="1280" height="720" scalable="true" maintainAspectRatio="true" codec="h264"><![CDATA[https://example.com/media/high.mp4]]></MediaFile>
-              <MediaFile id="5242" delivery="streaming" type="video/mp4" minBitrate="700" maxBitrate="1500" width="854" height="480" codec="h264" fileSize="524288" mediaType="2D"><![CDATA[https://example.com/media/adaptive.mp4]]></MediaFile>
-              <InteractiveCreativeFile apiFramework="SIMID" type="text/html" variableDuration="true"><![CDATA[data:text/html,%3Chtml%3E%3Cbody%3EInteractive%3C%2Fbody%3E%3C%2Fhtml%3E]]></InteractiveCreativeFile>
-              <ClosedCaptionFiles>
-                <ClosedCaptionFile type="text/vtt" language="en"><![CDATA[https://example.com/captions/en.vtt]]></ClosedCaptionFile>
-                <ClosedCaptionFile type="application/ttml+xml" language="zh-TW"><![CDATA[https://example.com/captions/zh.ttml]]></ClosedCaptionFile>
-              </ClosedCaptionFiles>
-            </MediaFiles>
-            <VideoClicks>
-              <ClickThrough id="click-through"><![CDATA[https://example.com/clickthrough]]></ClickThrough>
-              <ClickTracking id="click-tracking"><![CDATA[https://example.com/track/clickThrough]]></ClickTracking>
-              <CustomClick id="custom-click"><![CDATA[https://example.com/track/customClick]]></CustomClick>
-            </VideoClicks>
+            <Icons>
+              <Icon program="AdChoices" width="60" height="20" xPosition="right" yPosition="top" offset="00:00:00" duration="00:00:16" apiFramework="omid" pxratio="1">
+                <StaticResource creativeType="image/png"><![CDATA[https://example.com/icon/adchoices.png]]></StaticResource>
+                <IconClicks>
+                  <IconClickFallbackImages>
+                    <IconClickFallbackImage width="400" height="150">
+                      <AltText>Icon fallback alt text</AltText>
+                      <StaticResource><![CDATA[https://example.com/icon/fallback.png]]></StaticResource>
+                    </IconClickFallbackImage>
+                  </IconClickFallbackImages>
+                  <IconClickThrough><![CDATA[https://example.com/icon/clickThrough]]></IconClickThrough>
+                  <IconClickTracking id="icon-click-tracking"><![CDATA[https://example.com/track/iconClick]]></IconClickTracking>
+                </IconClicks>
+                <IconViewTracking><![CDATA[https://example.com/track/iconView]]></IconViewTracking>
+              </Icon>
+            </Icons>
             <TrackingEvents>
               <Tracking event="loaded"><![CDATA[https://example.com/track/loaded]]></Tracking>
               <Tracking event="start"><![CDATA[https://example.com/track/start]]></Tracking>
@@ -74,51 +68,59 @@
               <Tracking event="complete"><![CDATA[https://example.com/track/complete]]></Tracking>
               <Tracking event="progress" offset="00:00:10"><![CDATA[https://example.com/track/progress]]></Tracking>
             </TrackingEvents>
-            <Icons>
-              <Icon program="AdChoices" width="60" height="20" xPosition="right" yPosition="top" offset="00:00:00" duration="00:00:16" apiFramework="omid" pxratio="1">
-                <StaticResource creativeType="image/png"><![CDATA[https://example.com/icon/adchoices.png]]></StaticResource>
-                <IconViewTracking><![CDATA[https://example.com/track/iconView]]></IconViewTracking>
-                <IconClicks>
-                  <IconClickThrough><![CDATA[https://example.com/icon/clickThrough]]></IconClickThrough>
-                  <IconClickTracking id="icon-click-tracking"><![CDATA[https://example.com/track/iconClick]]></IconClickTracking>
-                  <IconClickFallbackImages>
-                    <IconClickFallbackImage width="400" height="150">
-                      <AltText>Icon fallback alt text</AltText>
-                      <StaticResource creativeType="image/png"><![CDATA[https://example.com/icon/fallback.png]]></StaticResource>
-                    </IconClickFallbackImage>
-                  </IconClickFallbackImages>
-                </IconClicks>
-              </Icon>
-            </Icons>
+            <AdParameters xmlEncoded="true"><![CDATA[params=1]]></AdParameters>
+            <Duration>00:00:16</Duration>
+            <MediaFiles>
+              <ClosedCaptionFiles>
+                <ClosedCaptionFile type="text/vtt" language="en"><![CDATA[https://example.com/captions/en.vtt]]></ClosedCaptionFile>
+                <ClosedCaptionFile type="application/ttml+xml" language="zh-TW"><![CDATA[https://example.com/captions/zh.ttml]]></ClosedCaptionFile>
+              </ClosedCaptionFiles>
+              <MediaFile id="5241" delivery="progressive" type="video/mp4" bitrate="2000" width="1280" height="720" scalable="true" maintainAspectRatio="true" codec="h264"><![CDATA[https://example.com/media/high.mp4]]></MediaFile>
+              <MediaFile id="5242" delivery="streaming" type="video/mp4" minBitrate="700" maxBitrate="1500" width="854" height="480" codec="h264" fileSize="524288" mediaType="2D"><![CDATA[https://example.com/media/adaptive.mp4]]></MediaFile>
+              <Mezzanine delivery="progressive" type="video/mp4" width="1280" height="720" codec="h264" id="mezzanine-1" fileSize="1048576" mediaType="2D"><![CDATA[https://example.com/media/mezzanine.mp4]]></Mezzanine>
+              <InteractiveCreativeFile apiFramework="SIMID" type="text/html" variableDuration="true"><![CDATA[data:text/html,%3Chtml%3E%3Cbody%3EInteractive%3C%2Fbody%3E%3C%2Fhtml%3E]]></InteractiveCreativeFile>
+            </MediaFiles>
+            <VideoClicks>
+              <ClickTracking id="click-tracking"><![CDATA[https://example.com/track/clickThrough]]></ClickTracking>
+              <ClickThrough id="click-through"><![CDATA[https://example.com/clickthrough]]></ClickThrough>
+              <CustomClick id="custom-click"><![CDATA[https://example.com/track/customClick]]></CustomClick>
+            </VideoClicks>
           </Linear>
+          <UniversalAdId idRegistry="Ad-ID">8465</UniversalAdId>
+          <UniversalAdId idRegistry="another-registry">test-8465</UniversalAdId>
         </Creative>
         <Creative id="5481" sequence="2" adId="2447227">
           <CompanionAds required="all">
             <Companion id="companion-1" width="300" height="250" assetWidth="300" assetHeight="250" expandedWidth="600" expandedHeight="500" apiFramework="omid" adSlotId="slot-1" pxratio="1" renderingMode="default">
               <StaticResource creativeType="image/png"><![CDATA[https://example.com/companion/300x250.png]]></StaticResource>
+              <AdParameters xmlEncoded="true"><![CDATA[companion=1]]></AdParameters>
+              <AltText>Companion alt text</AltText>
               <CompanionClickThrough><![CDATA[https://example.com/companion/clickThrough]]></CompanionClickThrough>
               <CompanionClickTracking id="companion-click-tracking"><![CDATA[https://example.com/track/companionClick]]></CompanionClickTracking>
-              <AltText>Companion alt text</AltText>
-              <AdParameters xmlEncoded="true"><![CDATA[companion=1]]></AdParameters>
               <TrackingEvents>
                 <Tracking event="creativeView"><![CDATA[https://example.com/track/companionCreativeView]]></Tracking>
               </TrackingEvents>
             </Companion>
           </CompanionAds>
+          <UniversalAdId idRegistry="Ad-ID">companion-8465</UniversalAdId>
         </Creative>
         <Creative id="5482" sequence="3" adId="2447228">
           <NonLinearAds>
+            <TrackingEvents>
+              <Tracking event="creativeView"><![CDATA[https://example.com/track/nonlinearCreativeView]]></Tracking>
+            </TrackingEvents>
             <NonLinear id="nonlinear-1" width="480" height="70" minSuggestedDuration="00:00:05" scalable="true" maintainAspectRatio="true" apiFramework="omid">
               <StaticResource creativeType="image/png"><![CDATA[https://example.com/nonlinear/480x70.png]]></StaticResource>
               <NonLinearClickThrough><![CDATA[https://example.com/nonlinear/clickThrough]]></NonLinearClickThrough>
               <NonLinearClickTracking id="nonlinear-click-tracking"><![CDATA[https://example.com/track/nonlinearClick]]></NonLinearClickTracking>
             </NonLinear>
-            <TrackingEvents>
-              <Tracking event="creativeView"><![CDATA[https://example.com/track/nonlinearCreativeView]]></Tracking>
-            </TrackingEvents>
           </NonLinearAds>
+          <UniversalAdId idRegistry="Ad-ID">nonlinear-8465</UniversalAdId>
         </Creative>
       </Creatives>
+      <Description><![CDATA[VAST 4.3 compliance fixture covering the full InLine schema.]]></Description>
+      <Expires>3600</Expires>
+      <Survey type="text/javascript"><![CDATA[https://example.com/survey]]></Survey>
     </InLine>
   </Ad>
 </VAST>

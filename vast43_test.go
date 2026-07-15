@@ -258,11 +258,13 @@ func TestVAST43InlineComplete(t *testing.T) {
 	assert.Equal(t, 150, fallback.Height)
 	assert.Equal(t, "Icon fallback alt text", fallback.AltText)
 	require.NotNil(t, fallback.StaticResource)
-	assert.Equal(t, "image/png", fallback.StaticResource.CreativeType)
+	assert.Empty(t, fallback.StaticResource.CreativeType)
 	assert.Equal(t, "https://example.com/icon/fallback.png", fallback.StaticResource.URI)
 
 	// Creative #2: CompanionAds.
 	compCreative := inline.Creatives[1]
+	require.NotNil(t, compCreative.UniversalAdID)
+	require.Len(t, *compCreative.UniversalAdID, 1)
 	require.NotNil(t, compCreative.CompanionAds)
 	assert.Equal(t, "all", compCreative.CompanionAds.Required)
 	require.Len(t, compCreative.CompanionAds.Companions, 1)
@@ -289,6 +291,8 @@ func TestVAST43InlineComplete(t *testing.T) {
 
 	// Creative #3: NonLinearAds.
 	nlCreative := inline.Creatives[2]
+	require.NotNil(t, nlCreative.UniversalAdID)
+	require.Len(t, *nlCreative.UniversalAdID, 1)
 	require.NotNil(t, nlCreative.NonLinearAds)
 	require.Len(t, nlCreative.NonLinearAds.NonLinears, 1)
 	nl := nlCreative.NonLinearAds.NonLinears[0]
@@ -373,12 +377,8 @@ func TestVAST43WrapperComplete(t *testing.T) {
 	require.Len(t, *linear.Icons.Icon, 1)
 	require.Len(t, (*linear.Icons.Icon)[0].IconClickTracking, 1)
 	assert.Equal(t, "wrapper-icon-click-tracking", (*linear.Icons.Icon)[0].IconClickTracking[0].ID)
-	// InteractiveCreativeFile directly under a wrapped <Linear> (schema section 5).
-	require.Len(t, linear.InteractiveCreativeFile, 1)
-	assert.Equal(t, "SIMID", linear.InteractiveCreativeFile[0].ApiFramework)
-	assert.Equal(t, "text/html", linear.InteractiveCreativeFile[0].Type)
-	assert.True(t, linear.InteractiveCreativeFile[0].VariableDuration)
-	assert.True(t, strings.HasPrefix(linear.InteractiveCreativeFile[0].URI, "data:"))
+	// InteractiveCreativeFile is limited to InLine/Linear/MediaFiles by section 3.9.3.
+	assert.Empty(t, linear.InteractiveCreativeFile)
 
 	nlAds := w.Creatives[1].NonLinearAds
 	require.NotNil(t, nlAds)
@@ -430,9 +430,17 @@ func TestVAST43InteractiveCreativeDataURI(t *testing.T) {
 					Impressions: []Impression{{URI: "https://example.com/i"}},
 					AdServingId: "serving-id",
 					Creatives: []Creative{{
+						UniversalAdID: &[]UniversalAdID{{IDRegistry: "Ad-ID", ID: "constructed-8465"}},
 						Linear: &Linear{
 							Duration: Duration(16e9),
 							MediaFiles: &MediaFiles{
+								MediaFile: []MediaFile{{
+									Delivery: "progressive",
+									Type:     "video/mp4",
+									Width:    1,
+									Height:   1,
+									URI:      "https://example.com/ad.mp4",
+								}},
 								InteractiveCreativeFile: []InteractiveCreativeFile{{
 									ApiFramework:     "SIMID",
 									Type:             "text/html",

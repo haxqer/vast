@@ -108,8 +108,8 @@ const (
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// Verification events (fired from within a <Verification> element's TrackingEvents)
 
-	// The player triggers this event when the verification resource(s) provided in the
-	// <Verification> element were executed. Used in the VAST 4.x separated-file model.
+	// The player triggers this event when none of the verification resources in the
+	// <Verification> element could be executed.
 	EventTypeVerificationNotExecuted = "verificationNotExecuted"
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

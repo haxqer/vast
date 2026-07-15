@@ -183,9 +183,7 @@ func TestQuickStart(t *testing.T) {
 		t.Errorf("Marshal() error = %v", err)
 		return
 	}
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("\n got = %s,  \nwant = %s", got, want)
-	}
+	assert.JSONEq(t, string(want), string(got))
 
 }
 
@@ -326,9 +324,7 @@ func TestCreateVastJson(t *testing.T) {
 				t.Errorf("Marshal() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("\ngot  %s \nwant %s", got, tt.want)
-			}
+			assert.JSONEq(t, string(tt.want), string(got))
 		})
 	}
 }
@@ -339,7 +335,7 @@ func TestCreateVastXML(t *testing.T) {
 		want    []byte
 		wantErr bool
 	}{
-		{name: "testCase1", want: []byte(`<VAST version="3.0" xmlns="http://www.iab.com/VAST"><Ad id="123"><InLine><AdSystem>DSP</AdSystem><Impression id="456"><![CDATA[http://impression.track.cn]]></Impression><AdTitle>ad title</AdTitle><Creatives><Creative id="123456"><Linear><Duration>00:00:15</Duration><TrackingEvents><Tracking event="start"><![CDATA[http://track.xxx.com/q/start?xx]]></Tracking></TrackingEvents><MediaFiles><MediaFile delivery="progressive" type="video/mp4" width="1024" height="576" label="123"><![CDATA[http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4]]></MediaFile></MediaFiles></Linear></Creative></Creatives></InLine></Ad></VAST>`),
+		{name: "testCase1", want: []byte(`<VAST version="3.0" xmlns="http://www.iab.com/VAST"><Ad id="123"><InLine><AdSystem>DSP</AdSystem><Impression id="456"><![CDATA[http://impression.track.cn]]></Impression><AdTitle>ad title</AdTitle><Creatives><Creative id="123456"><Linear><TrackingEvents><Tracking event="start"><![CDATA[http://track.xxx.com/q/start?xx]]></Tracking></TrackingEvents><Duration>00:00:15</Duration><MediaFiles><MediaFile delivery="progressive" type="video/mp4" width="1024" height="576" label="123"><![CDATA[http://mp4.res.xxx.com/new_video/2020/01/14/1485/335928CBA9D02E95E63ED9F4D45DF6DF_20200114_1_1_1051.mp4]]></MediaFile></MediaFiles></Linear></Creative></Creatives></InLine></Ad></VAST>`),
 			wantErr: false},
 	}
 	for _, tt := range tests {

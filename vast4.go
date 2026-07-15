@@ -5,7 +5,7 @@ type ViewableImpression struct {
 	// An ad server id for the impression.
 	// Viewable impression resources of the same id should be requested at the same time,
 	// or as close in time as possible, to help prevent discrepancies.
-	ID string `xml:"id,attr"`
+	ID string `xml:"id,attr,omitempty"`
 	// The <Viewable> element is used to place a URI that the player triggers if and when
 	// the ad meets criteria for a viewable video ad impression.
 	Viewable []CDATAString `xml:"Viewable,omitempty"`
@@ -38,13 +38,13 @@ type Verification struct {
 	// An identifier for the verification vendor. The recommended format is [domain]- [useCase],
 	// to avoid name collisions. For example, "company.com-omid".
 	Vendor string `xml:"vendor,attr,omitempty"`
+	// A reference to a non-JavaScript or custom-integration resource intended for collecting verification data via the listed apiFramework.
+	ExecutableResource []ExecutableResource `xml:"ExecutableResource,omitempty"`
 	// A container for the URI to the JavaScript file used to collect verification data.
 	// Some verification vendors may provide JavaScript executables which work in non-browser environments,
 	// for example, in an iOS app enabled by JavaScriptCore. These resources only require methods of the API framework,
 	// without relying on any browser built-in functionality.
 	JavaScriptResource []JavaScriptResource `xml:"JavaScriptResource,omitempty"`
-	// A reference to a non-JavaScript or custom-integration resource intended for collecting verification data via the listed apiFramework.
-	ExecutableResource []ExecutableResource `xml:"ExecutableResource,omitempty"`
 	// The verification vendor may provide URIs for tracking events relating to the execution of their code during the ad session.
 	TrackingEvents *TrackingEvents `xml:"TrackingEvents,omitempty"`
 	// <VerificationParameters> contains a CDATA-wrapped string intended for bootstrapping the verification code and providing metadata about the current impression.
@@ -65,7 +65,8 @@ type JavaScriptResource struct {
 	ApiFramework string `xml:"apiFramework,attr,omitempty"`
 	// If "true", this resource is optimized and able to execute in
 	// an environment without DOM and other browser built-ins (e.g. iOS' JavaScriptCore).
-	BrowserOptional bool `xml:"browserOptional,attr,omitempty"`
+	BrowserOptional    bool `xml:"browserOptional,attr,omitempty"`
+	BrowserOptionalSet bool `xml:"-" json:",omitempty"`
 	// A CDATA-wrapped URI to a file providing Closed Caption info for the media file.
 	URI string `xml:",cdata"`
 }
@@ -118,7 +119,8 @@ type InteractiveCreativeFile struct {
 	// Identifies whether the ad always drops when the duration is reached,
 	// or if it can potentially extend the duration by pausing the underlying video or delaying the adStopped call after adVideoComplete.
 	// If it set to true the extension of the duration should be user-initiated (typically by engaging with an interactive element to view additional content).
-	VariableDuration bool `xml:"variableDuration,attr,omitempty"`
+	VariableDuration    bool `xml:"variableDuration,attr,omitempty"`
+	VariableDurationSet bool `xml:"-" json:",omitempty"`
 	// A CDATA-wrapped URI to a file providing creative functions for the media file.
 	// As of VAST 4.3 this may be a direct URL or an inline data URI (e.g. to embed a
 	// small HTML payload directly instead of a URL for retrieving the file).
@@ -147,8 +149,8 @@ type IconClickFallbackImages struct {
 
 type IconClickFallbackImage struct {
 	AltText string `xml:"AltText,omitempty"`
-	// A URL to a static file, such as an image. A <StaticResource> carries a
-	// creativeType (MIME type) attribute per the VAST spec (section 3.15.1).
+	// A URL to a static fallback image. Unlike creative resources, this element
+	// does not require a creativeType attribute.
 	StaticResource *StaticResource `xml:"StaticResource,omitempty"`
 	Height         int             `xml:"height,attr,omitempty"`
 	Width          int             `xml:"width,attr,omitempty"`
